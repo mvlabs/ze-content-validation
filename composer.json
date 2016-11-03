@@ -1,0 +1,63 @@
+{
+    "name": "mvlabs/ze-content-validation",
+    "type": "library",
+    "description": "PSR-7 Validation middleware for Zend Expressive",
+    "authors": [
+        {
+            "name": "Diego Drigani",
+            "homepage": "http://www.mvlabs.it"
+        }
+    ],
+    "license": "MIT",
+    "repositories": [
+    ],
+    "keywords": [
+        "http",
+        "zend",
+        "expressive",
+        "validation",
+        "psr",
+        "psr-7"
+    ],
+    "require": {
+        "php": "^5.5 || ^7.0",
+        "roave/security-advisories": "dev-master",
+        "zendframework/zend-expressive": "^1.0",
+        "zendframework/zend-filter": "^2.7.1",
+        "zendframework/zend-http": "^2.5.4",
+        "zendframework/zend-inputfilter": "^2.7.3",
+        "zendframework/zend-servicemanager": "^2.7.6 || ^3.1",
+        "zendframework/zend-stdlib": "^2.7.7 || ^3.0.1",
+        "zendframework/zend-validator": "^2.8.1",
+        "zendframework/zend-i18n": "^2.5",
+        "los/api-problem": "^0.9.0"
+    },
+    "require-dev": {
+        "composer/composer": ">=1.0.0-alpha10",
+        "phpunit/phpunit": "^4.8",
+        "squizlabs/php_codesniffer": "^2.3",
+        "filp/whoops": "^1.1",
+        "robmorgan/phinx": "^0.4.6",
+        "fzaninotto/faker": "^1.5",
+        "codeception/codeception": "*"
+    },
+    "autoload": {
+        "psr-4": {
+             "ZE\\ContentValidation\\": "src/"
+        }        
+    },
+    "autoload-dev": {
+        "psr-4": {
+             "ZETest\\ContentValidation\\": "test/"
+        }
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "cs-check": "phpcs",
+        "cs-fix": "phpcbf",
+        "test": "phpunit"
+    }
+}
