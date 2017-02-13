@@ -1,12 +1,11 @@
 <?php
 namespace ZE\ContentValidation\Middleware;
 
-use Doctrine\Tests\Common\Cache\ApcCacheTest;
-use ExpressiveValidator\Validator\ValidationFailedException;
 use LosMiddleware\ApiProblem\Model\ApiProblem;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ZE\ContentValidation\Exception\ValidationException;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Stratigility\ErrorMiddlewareInterface;
 
@@ -14,17 +13,17 @@ final class ApiProblemMiddleware implements ErrorMiddlewareInterface
 {
 
     /**
-     * @param RequestInterface $request
+     * @param mixed $error
+     * @param ServerRequestInterface $request
      * @param ResponseInterface $response
-     * @param callable $next
+     * @param callable|null $out
+     * @return static
      */
     public function __invoke($error, ServerRequestInterface $request, ResponseInterface $response, callable $out = null)
     {
-        $data = [];
-
         $status = $this->getStatusCode($error, $response);
         $message = $this->getMessage($error, $request, $response);
-        $additionalDetails = $this->getAdditionalDetails($error);
+        $additionalDetails = $this->getAdditionalDetails($error, $request);
 
         if ($status == 404 && empty($message)) {
             $detail = sprintf("Path '%s' not found.", $request->getUri()->getPath());
@@ -107,12 +106,11 @@ final class ApiProblemMiddleware implements ErrorMiddlewareInterface
      * @param $error
      * @return array
      */
-    private function getAdditionalDetails($error)
+    private function getAdditionalDetails(\Throwable $error, ServerRequestInterface $request)
     {
-
-        if ($error instanceof ValidationFailedException) {
+        if ($error instanceof ValidationException) {
             return [
-                'error' => $error->getValidationResult()->getMessages()
+                'error' => $request->getAttribute('inputFilter')->getMessages()
             ];
         }
 

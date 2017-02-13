@@ -6,6 +6,7 @@ use Interop\Container\ContainerInterface;
 use Zend\Filter\FilterPluginManager;
 use Zend\InputFilter\Factory;
 use Zend\InputFilter\InputFilterPluginManager;
+use Zend\ServiceManager\ServiceManager;
 use Zend\Validator\ValidatorPluginManager;
 
 class InputFilterFactory
@@ -21,13 +22,14 @@ class InputFilterFactory
         $filters    = isset($config['zend-inputfilter']['filters']) ? $config['zend-inputfilter']['filters'] : [];
         $validators = isset($config['zend-inputfilter']['validators']) ? $config['zend-inputfilter']['validators'] : [];
 
+        return new InputFilterPluginManager($container);
         // Construct factory
         $factory = new Factory(new InputFilterPluginManager($container));
         $factory->getDefaultFilterChain()
             ->setPluginManager(new FilterPluginManager($container, $filters));
         $factory->getDefaultValidatorChain()
             ->setPluginManager(new ValidatorPluginManager($container, $validators));
-
+        //ServiceManager::class
         return $factory;
     }
 }

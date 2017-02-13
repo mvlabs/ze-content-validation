@@ -1,14 +1,16 @@
 <?php
 
-
 namespace ZE\ContentValidation\Exception;
 
+use LosMiddleware\ApiProblem\Exception\ApiException;
+
 /**
- * Base exception class for the ZE content validation middleware
+ * ValidationException
  *
  * @author Diego Drigani <d.drigani@mvlabs.it>
  * @license MIT
  */
-interface ExceptionInterface
+class ValidationException extends ApiException
 {
+
 }

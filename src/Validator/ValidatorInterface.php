@@ -4,6 +4,10 @@ namespace ZE\ContentValidation\Validator;
 
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * Interface ValidatorInterface
+ * @package ZE\ContentValidation\Validator
+ */
 interface ValidatorInterface
 {
     /**

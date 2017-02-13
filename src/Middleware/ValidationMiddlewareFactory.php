@@ -1,8 +1,10 @@
 <?php
 
-namespace ZE\ContentValidation\Validator;
+namespace ZE\ContentValidation\Middleware;
 
 use Interop\Container\ContainerInterface;
+use ZE\ContentValidation\Middleware\ValidationMiddleware;
+use ZE\ContentValidation\Validator\ValidatorHandler;
 
 class ValidationMiddlewareFactory
 {
@@ -13,7 +15,7 @@ class ValidationMiddlewareFactory
     public function __invoke(ContainerInterface $container)
     {
         return new ValidationMiddleware(
-            $container->get(Validator::class)
+            $container->get(ValidatorHandler::class)
         );
     }
 }
