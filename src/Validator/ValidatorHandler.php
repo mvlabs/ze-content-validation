@@ -4,11 +4,12 @@ namespace ZE\ContentValidation\Validator;
 
 use Psr\Http\Message\ServerRequestInterface;
 use ZE\ContentValidation\Exception\ValidationClassNotExists;
+use ZE\ContentValidation\Extractor\DataExtractorChain;
+use ZE\ContentValidation\Extractor\OptionsExtractor;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Stdlib\ArrayUtils;
 
 /**
  * Class Validator
@@ -27,36 +28,31 @@ class ValidatorHandler implements ValidatorInterface
     private $router;
 
     /**
-     * Request with parsed json
-     * @var ServerRequestInterface
+     * @var DataExtractorChain
      */
-    private $decoratedRequest;
+    private $dataExtractorChain;
 
+    /**
+     * @var ServiceLocatorInterface
+     */
     private $inputFilterManager;
 
-    /**
-     * @var array
-     */
-    protected $methodsWithoutBodies = [
-        'GET',
-        'HEAD',
-        'OPTIONS',
-        'DELETE',
-    ];
 
     /**
-     * The options extractor for extracting from the config
+     * ValidatorHandler constructor.
      * @param OptionsExtractor $optionsExtractor
+     * @param DataExtractorChain $dataExtractorChain
      * @param RouterInterface $router
      * @param ServiceLocatorInterface $inputFilterManager
      */
     public function __construct(
         OptionsExtractor $optionsExtractor,
+        DataExtractorChain $dataExtractorChain,
         RouterInterface $router,
         ServiceLocatorInterface $inputFilterManager
-    )
-    {
+    ) {
         $this->optionsExtractor = $optionsExtractor;
+        $this->dataExtractorChain = $dataExtractorChain;
         $this->router = $router;
         $this->inputFilterManager = $inputFilterManager;
     }
@@ -64,17 +60,15 @@ class ValidatorHandler implements ValidatorInterface
 
     /**
      * Validates the request
-     * @param ServerRequestInterface $requestInterface
+     * @param ServerRequestInterface $request
      * @return bool|ValidationResult
      */
-    public function validate(ServerRequestInterface $requestInterface)
+    public function validate(ServerRequestInterface $request)
     {
-        //$this->decoratedRequest = new RequestValidator($requestInterface, $this->router);
-        $this->decoratedRequest = $requestInterface;
-        $validatorProvider = $this->getValidatorObject($this->decoratedRequest);
+        $validatorProvider = $this->getValidatorObject($request);
         if ($validatorProvider instanceof InputFilterInterface) {
-            $postData = $this->getDataFromRequest($requestInterface);
-            $validatorProvider->setData($postData);
+            $data = $this->dataExtractorChain->getDataFromRequest($request);
+            $validatorProvider->setData($data);
             return $validatorProvider;
         }
 
@@ -112,20 +106,5 @@ class ValidatorHandler implements ValidatorInterface
         }
 
         return $this->inputFilterManager->get($inputFilterService);
-    }
-
-    private function getDataFromRequest($requestInterface)
-    {
-        $method = $requestInterface->getMethod();
-        $data = in_array($method, $this->methodsWithoutBodies)
-            ? $requestInterface->getQueryParams()
-            : $requestInterface->getParsedBody();
-
-        $files = $requestInterface->getUploadedFiles();
-        if (0 < count($files)) {
-            $data = ArrayUtils::merge($data, $files->toArray(), true);
-        }
-
-        return $data;
     }
 }

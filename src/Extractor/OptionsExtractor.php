@@ -1,24 +1,15 @@
 <?php
-namespace ZE\ContentValidation\Validator;
+namespace ZE\ContentValidation\Extractor;
 
-use ArrayObject;
-use Interop\Container\ContainerInterface;
-use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Expressive\Application;
-use Zend\Expressive\Router\Route;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Expressive\Router\RouteResult;
 use Zend\Expressive\Router\RouterInterface;
-use Zend\ServiceManager\AbstractFactoryInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Stratigility\MiddlewareInterface;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Psr\Http\Message\ResponseInterface as Response;
+
 
 /**
- *
  * Class OptionsExtractor
- * @package SchedulerApi\Middleware
+ * @package ZE\ContentValidation\Extractor
  */
 class OptionsExtractor
 {
@@ -32,8 +23,9 @@ class OptionsExtractor
      */
     private $router;
 
+
     /**
-     * @codeCoverageIgnore
+     * OptionsExtractor constructor.
      * @param array $config
      * @param RouterInterface $router
      */
@@ -45,7 +37,7 @@ class OptionsExtractor
 
     /**
      * @param Request $request
-     * @return array []
+     * @return array
      */
     public function getOptionsForRequest(ServerRequestInterface $request)
     {
@@ -63,17 +55,17 @@ class OptionsExtractor
         return [];
     }
 
+
     /**
-     * Get all routes definitions
-     * @return mixed []
+     * @return array
      */
     public function getAll()
     {
         return $this->config;
     }
 
+
     /**
-     * Get a sanitize route definition
      * @return array
      */
     public function getAllSanitize()

@@ -1,5 +1,5 @@
 <?php
-namespace ZE\ContentValidation\Validator;
+namespace ZE\ContentValidation\Extractor;
 
 use Interop\Container\ContainerInterface;
 use Zend\Expressive\Router\RouterInterface;
@@ -8,7 +8,7 @@ use Zend\Expressive\Router\RouterInterface;
  * Class OptionExtractorFactory
  * @package StdLib\Helpers
  */
-class OptionExtractorFactory
+class OptionsExtractorFactory
 {
     public function __invoke(ContainerInterface $container)
     {

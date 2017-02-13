@@ -11,8 +11,8 @@ use Psr\Http\Message\ServerRequestInterface;
 interface ValidatorInterface
 {
     /**
-     * @param ServerRequestInterface $requestInterface
+     * @param ServerRequestInterface $request
      * @return bool|ValidationResult
      */
-    public function validate(ServerRequestInterface $requestInterface);
+    public function validate(ServerRequestInterface $request);
 }

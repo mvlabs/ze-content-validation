@@ -3,6 +3,8 @@
 namespace ZE\ContentValidation\Validator;
 
 use Interop\Container\ContainerInterface;
+use ZE\ContentValidation\Extractor\DataExtractorChain;
+use ZE\ContentValidation\Extractor\OptionsExtractor;
 use Zend\Expressive\Router\RouterInterface;
 
 
@@ -20,6 +22,7 @@ class ValidatorHandlerFactory
     {
         return new ValidatorHandler(
             $container->get(OptionsExtractor::class),
+            $container->get(DataExtractorChain::class),
             $container->get(RouterInterface::class),
             $container->get('InputFilterManager')
         );
