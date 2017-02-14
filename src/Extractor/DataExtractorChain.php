@@ -1,12 +1,21 @@
 <?php
+/**
+ * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ *
+ * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @license MIT
+ */
 namespace ZE\ContentValidation\Extractor;
 
 use Psr\Http\Message\RequestInterface;
+use ZE\ContentValidation\Exception\UnexpectedValueException;
 use Zend\Stdlib\ArrayUtils;
 
 /**
  * Class DataExtractorChain
+ *
  * @package ZE\ContentValidation\Extractor
+ * @author Diego Drigani <d.drigani@mvlabs.it>
  */
 class DataExtractorChain
 {
@@ -42,10 +51,10 @@ class DataExtractorChain
 
                 if (!is_array($data)) {
                     throw new UnexpectedValueException(sprintf(
-                    'Data Extractor `%s` returned a `%s` instead of an `array`',
-                    get_class($extractor),
-                    is_object($data) ? get_class($data) : gettype($data)
-                ));
+                        'Data Extractor `%s` returned a `%s` instead of an `array`',
+                        get_class($extractor),
+                        is_object($data) ? get_class($data) : gettype($data)
+                    ));
                 }
                 return $data;
             },

@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ *
+ * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @license MIT
+ */
 namespace ZE\ContentValidation\Validator;
 
 use Psr\Http\Message\ServerRequestInterface;
@@ -12,8 +17,10 @@ use Zend\InputFilter\InputFilterInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class Validator
+ * Class ValidatorHandler
+ *
  * @package ZE\ContentValidation\Validator
+ * @author Diego Drigani <d.drigani@mvlabs.it>
  */
 class ValidatorHandler implements ValidatorInterface
 {
@@ -66,10 +73,11 @@ class ValidatorHandler implements ValidatorInterface
     public function validate(ServerRequestInterface $request)
     {
         $validatorProvider = $this->getValidatorObject($request);
+
         if ($validatorProvider instanceof InputFilterInterface) {
             $data = $this->dataExtractorChain->getDataFromRequest($request);
             $validatorProvider->setData($data);
-            return $validatorProvider;
+            return ValidationResult::buildFromInputFilter($validatorProvider, $request->getMethod());
         }
 
         return true;
@@ -101,6 +109,7 @@ class ValidatorHandler implements ValidatorInterface
     private function getInputFilter($inputFilterService)
     {
         $inputFilter = $this->inputFilterManager->get($inputFilterService);
+
         if (!$inputFilter instanceof InputFilter) {
             throw new ValidationClassNotExists(sprintf('Listed input filter "%s" does not exist; cannot validate request', $inputFilterService));
         }

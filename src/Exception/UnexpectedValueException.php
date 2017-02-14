@@ -7,13 +7,11 @@
  */
 namespace ZE\ContentValidation\Exception;
 
-use Exception;
 /**
- * ValidationClassNotExists
+ * UnexpetedValueExcpetion
  *
  * @author Diego Drigani <d.drigani@mvlabs.it>
- */
-class ValidationClassNotExists extends Exception
+  */
+class UnexpectedValueException extends \Exception
 {
-
 }
