@@ -12,7 +12,6 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Expressive\Router\RouteResult;
 use Zend\Expressive\Router\RouterInterface;
 
-
 /**
  * Class OptionsExtractor
  * @package ZE\ContentValidation\Extractor
@@ -55,7 +54,6 @@ class OptionsExtractor
 
         foreach ($this->config as $route) {
             if ($route['name'] === $routePath) {
-
                 return isset($route['options']) ? $route['options'] : [];
             }
         }

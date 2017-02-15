@@ -10,8 +10,6 @@ namespace ZE\ContentValidation\Validator;
 use Interop\Container\ContainerInterface;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
-use Zend\Expressive\Router\RouterInterface;
-
 
 /**
  * Class ValidatorHandlerFactory

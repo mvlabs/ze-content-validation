@@ -8,6 +8,7 @@
 namespace ZE\ContentValidation\Exception;
 
 use Exception;
+
 /**
  * ValidationClassNotExists
  *
@@ -15,5 +16,4 @@ use Exception;
  */
 class ValidationClassNotExists extends Exception
 {
-
 }

@@ -51,10 +51,10 @@ final class ValidationResult implements ValidationResultInterface
         array $messages,
         $method = null
     ) {
-        $this->rawValues  = $rawValues;
-        $this->values     = $values;
-        $this->messages   = $messages;
-        $this->method     = $method;
+        $this->rawValues = $rawValues;
+        $this->values = $values;
+        $this->messages = $messages;
+        $this->method = $method;
     }
 
     public static function buildFromInputFilter(InputFilterInterface $inputFilter, $method)

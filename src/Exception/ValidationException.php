@@ -16,5 +16,4 @@ use LosMiddleware\ApiProblem\Exception\ApiException;
  */
 class ValidationException extends ApiException
 {
-
 }

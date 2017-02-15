@@ -11,7 +11,7 @@ namespace ZE\ContentValidation\Exception;
  * UnexpetedValueExcpetion
  *
  * @author Diego Drigani <d.drigani@mvlabs.it>
-  */
+ */
 class UnexpectedValueException extends \Exception
 {
 }

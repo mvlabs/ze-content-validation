@@ -8,7 +8,6 @@
 namespace ZE\ContentValidation\Middleware;
 
 use Interop\Container\ContainerInterface;
-use ZE\ContentValidation\Middleware\ValidationMiddleware;
 use ZE\ContentValidation\Validator\ValidatorHandler;
 
 /**

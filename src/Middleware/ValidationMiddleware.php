@@ -7,13 +7,11 @@
  */
 namespace ZE\ContentValidation\Middleware;
 
-
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use ZE\ContentValidation\Exception\ValidationException;
 use ZE\ContentValidation\Validator\ValidationResult;
 use ZE\ContentValidation\Validator\ValidatorHandler;
-use Zend\InputFilter\InputFilterInterface;
 use Zend\Stratigility\MiddlewareInterface;
 
 /**
@@ -22,7 +20,6 @@ use Zend\Stratigility\MiddlewareInterface;
  * @package ZE\ContentValidation\Middleware
  * @author Diego Drigani<d.drigani@mvlabs.it>
  */
-
 class ValidationMiddleware implements MiddlewareInterface
 {
     /**
@@ -54,8 +51,7 @@ class ValidationMiddleware implements MiddlewareInterface
          */
         $validationResult = $this->validator->validate($request);
 
-        if ($validationResult instanceof ValidationResult  && !$validationResult->isValid()) {
-
+        if ($validationResult instanceof ValidationResult && !$validationResult->isValid()) {
             $request = $request->withAttribute('validationResult', $validationResult);
 
             $validationException = new ValidationException(

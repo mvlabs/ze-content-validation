@@ -41,10 +41,10 @@ class FileExtractor implements DataExtractorInterface
      */
     public function uploadedFileToArray(UploadedFileInterface $uploadedFile)
     {
-        if (!$uploadedFile->getError()){
+        if (!$uploadedFile->getError()) {
             $stream = $uploadedFile->getStream();
             return [
-                'tmp_name' => ($stream)? $stream->getMetadata('uri'):'',
+                'tmp_name' => ($stream) ? $stream->getMetadata('uri') : '',
                 'name' => $uploadedFile->getClientFilename(),
                 'type' => $uploadedFile->getClientMediaType(),
                 'size' => $uploadedFile->getSize(),
