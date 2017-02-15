@@ -11,7 +11,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use ZE\ContentValidation\Exception\ValidationClassNotExists;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
-use Zend\Expressive\Router\RouterInterface;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -30,11 +29,6 @@ class ValidatorHandler implements ValidatorInterface
     private $optionsExtractor;
 
     /**
-     * @var RouterInterface
-     */
-    private $router;
-
-    /**
      * @var DataExtractorChain
      */
     private $dataExtractorChain;
@@ -49,18 +43,15 @@ class ValidatorHandler implements ValidatorInterface
      * ValidatorHandler constructor.
      * @param OptionsExtractor $optionsExtractor
      * @param DataExtractorChain $dataExtractorChain
-     * @param RouterInterface $router
      * @param ServiceLocatorInterface $inputFilterManager
      */
     public function __construct(
         OptionsExtractor $optionsExtractor,
         DataExtractorChain $dataExtractorChain,
-        RouterInterface $router,
         ServiceLocatorInterface $inputFilterManager
     ) {
         $this->optionsExtractor = $optionsExtractor;
         $this->dataExtractorChain = $dataExtractorChain;
-        $this->router = $router;
         $this->inputFilterManager = $inputFilterManager;
     }
 
@@ -106,6 +97,11 @@ class ValidatorHandler implements ValidatorInterface
         return null;
     }
 
+    /**
+     * @param $inputFilterService
+     * @return mixed
+     * @throws ValidationClassNotExists
+     */
     private function getInputFilter($inputFilterService)
     {
         $inputFilter = $this->inputFilterManager->get($inputFilterService);
