@@ -5,6 +5,7 @@
     "authors": [
         {
             "name": "Diego Drigani",
+            "email": "d.drigani@mvlabs.it",
             "homepage": "http://www.mvlabs.it"
         }
     ],
@@ -60,5 +61,8 @@
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
         "test": "phpunit"
+    },
+    "suggest": {
+        "mtymek/expressive-config-manager": "Allows collecting and merging configuration from different sources"
     }
 }
