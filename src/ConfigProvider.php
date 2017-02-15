@@ -20,7 +20,7 @@ class ConfigProvider
      * @return mixed
      */
     public function __invoke()
-    {   return [];
+    {
         return Factory::fromFiles(Glob::glob(__DIR__ . '/../config/{,*.}config.php', Glob::GLOB_BRACE));
     }
 }
