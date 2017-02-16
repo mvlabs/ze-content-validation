@@ -129,7 +129,7 @@ class DataExtractorChainTest extends TestCase
 
     public function testBodyExtractorExtractDataFromRequestOnPostAndIsOk()
     {
-        $extractor =new BodyExtractor();
+        $extractor = new BodyExtractor();
         $data = [
             'Foo' => 'FooBar',
             'Fizz' => 'Buzz',
@@ -149,7 +149,7 @@ class DataExtractorChainTest extends TestCase
 
     public function testQueryExtractorExtractDataFromRequestOnGetAndIsOk()
     {
-        $extractor =new QueryExtractor();
+        $extractor = new QueryExtractor();
         $data = [
             'Foo' => 'FooBar',
             'Fizz' => 'Buzz',
@@ -169,14 +169,14 @@ class DataExtractorChainTest extends TestCase
 
     public function testFileExtractorExtractDataFromRequestOnPostAndIsOk()
     {
-        $extractor =new FileExtractor();
+        $extractor = new FileExtractor();
         $data = [
             'filename' => [
                 'tmp_name' => '',
                 'name' => '/tmp/12345678adf',
                 'type' => 'text/plain',
                 'size' => '10',
-                'error' => NULL
+                'error' => null
             ]
         ];
 
@@ -186,7 +186,7 @@ class DataExtractorChainTest extends TestCase
         $uploadedFile->getClientFilename()->willReturn('/tmp/12345678adf');
         $uploadedFile->getClientMediaType()->willReturn('text/plain');
         $uploadedFile->getSize()->willReturn('10');
-        $uploadedFile->getError()->willReturn(NULL);
+        $uploadedFile->getError()->willReturn(null);
 
         $request = ServerRequestFactory::fromGlobals()
             ->withMethod('POST')
@@ -201,5 +201,4 @@ class DataExtractorChainTest extends TestCase
             $actual
         );
     }
-
 }

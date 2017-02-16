@@ -30,12 +30,14 @@ class OptionExtractorTest extends PHPUnit_Framework_TestCase
                 'options' => []
             ]
         ];
-        $routeResult = RouteResult::fromRouteMatch($this->config[0]['name'],
+        $routeResult = RouteResult::fromRouteMatch(
+            $this->config[0]['name'],
             function () {
             },
             [
                 'id' => '1234'
-            ]);
+            ]
+        );
         $router = $this->getMockBuilder(ZendRouter::class)->getMock();
         $router->expects($this->any())
             ->method('match')
