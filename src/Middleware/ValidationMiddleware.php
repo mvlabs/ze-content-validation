@@ -3,7 +3,7 @@
  * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
  *
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
- * @license MIT
+ * @license   MIT
  */
 namespace ZE\ContentValidation\Middleware;
 
@@ -18,7 +18,7 @@ use Zend\Stratigility\MiddlewareInterface;
  * Class ValidationMiddleware
  *
  * @package ZE\ContentValidation\Middleware
- * @author Diego Drigani<d.drigani@mvlabs.it>
+ * @author  Diego Drigani<d.drigani@mvlabs.it>
  */
 class ValidationMiddleware implements MiddlewareInterface
 {
@@ -39,9 +39,10 @@ class ValidationMiddleware implements MiddlewareInterface
 
     /**
      * Validates the request
-     * @param Request $request
-     * @param Response $response
-     * @param callable|null $out
+     *
+     * @param      Request       $request
+     * @param      Response      $response
+     * @param      callable|null $out
      * @inheritdoc
      */
     public function __invoke(Request $request, Response $response, callable $out = null)
@@ -51,7 +52,7 @@ class ValidationMiddleware implements MiddlewareInterface
          */
         $validationResult = $this->validator->validate($request);
 
-        if ($validationResult instanceof ValidationResult && !$validationResult->isValid()) {
+        if ($validationResult instanceof ValidationResult && ! $validationResult->isValid()) {
             $request = $request->withAttribute('validationResult', $validationResult);
 
             $validationException = new ValidationException(

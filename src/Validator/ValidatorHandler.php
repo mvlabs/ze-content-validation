@@ -3,7 +3,7 @@
  * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
  *
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
- * @license MIT
+ * @license   MIT
  */
 namespace ZE\ContentValidation\Validator;
 
@@ -19,7 +19,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
  * Class ValidatorHandler
  *
  * @package ZE\ContentValidation\Validator
- * @author Diego Drigani <d.drigani@mvlabs.it>
+ * @author  Diego Drigani <d.drigani@mvlabs.it>
  */
 class ValidatorHandler implements ValidatorInterface
 {
@@ -41,8 +41,9 @@ class ValidatorHandler implements ValidatorInterface
 
     /**
      * ValidatorHandler constructor.
-     * @param OptionsExtractor $optionsExtractor
-     * @param DataExtractorChain $dataExtractorChain
+     *
+     * @param OptionsExtractor        $optionsExtractor
+     * @param DataExtractorChain      $dataExtractorChain
      * @param ServiceLocatorInterface $inputFilterManager
      */
     public function __construct(
@@ -58,7 +59,8 @@ class ValidatorHandler implements ValidatorInterface
 
     /**
      * Validates the request
-     * @param ServerRequestInterface $request
+     *
+     * @param  ServerRequestInterface $request
      * @return bool|ValidationResult
      */
     public function validate(ServerRequestInterface $request)
@@ -77,7 +79,8 @@ class ValidatorHandler implements ValidatorInterface
     /**
      * Checks an returns the validation object
      * or null otherwise
-     * @param ServerRequestInterface $request
+     *
+     * @param  ServerRequestInterface $request
      * @return ValidationRulesInterface
      */
     private function getValidatorObject(ServerRequestInterface $request)
@@ -106,8 +109,13 @@ class ValidatorHandler implements ValidatorInterface
     {
         $inputFilter = $this->inputFilterManager->get($inputFilterService);
 
-        if (!$inputFilter instanceof InputFilter) {
-            throw new ValidationClassNotExists(sprintf('Listed input filter "%s" does not exist; cannot validate request', $inputFilterService));
+        if (! $inputFilter instanceof InputFilter) {
+            throw new ValidationClassNotExists(
+                sprintf(
+                    'Listed input filter "%s" does not exist; cannot validate request',
+                    $inputFilterService
+                )
+            );
         }
 
         return $this->inputFilterManager->get($inputFilterService);

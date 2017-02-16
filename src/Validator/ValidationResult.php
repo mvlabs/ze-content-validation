@@ -3,7 +3,7 @@
  * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
  *
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
- * @license MIT
+ * @license   MIT
  */
 namespace ZE\ContentValidation\Validator;
 
@@ -13,7 +13,7 @@ use Zend\InputFilter\InputFilterInterface;
  * Class ValidationResult
  *
  * @package ZE\ContentValidation\Validator
- * @author Diego Drigani<d.drigani@mvlabs.it>
+ * @author  Diego Drigani<d.drigani@mvlabs.it>
  */
 final class ValidationResult implements ValidationResultInterface
 {
@@ -40,9 +40,9 @@ final class ValidationResult implements ValidationResultInterface
     /**
      * ValidationResult constructor.
      *
-     * @param array $rawValues
-     * @param array $values
-     * @param array $messages
+     * @param array       $rawValues
+     * @param array       $values
+     * @param array       $messages
      * @param null|string $method
      */
     public function __construct(
@@ -61,7 +61,7 @@ final class ValidationResult implements ValidationResultInterface
     {
         $messages = [];
 
-        if (!$inputFilter->isValid()) {
+        if (! $inputFilter->isValid()) {
             foreach ($inputFilter->getInvalidInput() as $message) {
                 $messages[$message->getName()] = $message->getMessages();
             }

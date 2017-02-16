@@ -3,7 +3,7 @@
  * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
  *
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
- * @license MIT
+ * @license   MIT
  */
 namespace ZE\ContentValidation\Extractor;
 
@@ -14,8 +14,9 @@ use Zend\Expressive\Router\RouterInterface;
 
 /**
  * Class OptionsExtractor
+ *
  * @package ZE\ContentValidation\Extractor
- * @author Diego Drigani <d.drigani@mvlabs.it>
+ * @author  Diego Drigani <d.drigani@mvlabs.it>
  */
 class OptionsExtractor
 {
@@ -32,7 +33,8 @@ class OptionsExtractor
 
     /**
      * OptionsExtractor constructor.
-     * @param array $config
+     *
+     * @param array           $config
      * @param RouterInterface $router
      */
     public function __construct(array $config, RouterInterface $router)
@@ -75,12 +77,15 @@ class OptionsExtractor
      */
     public function getAllSanitize()
     {
-        return array_map(function ($item) {
-            return [
-                "name" => $item['name'],
-                "path" => $item['path'],
-                "allowed_methods" => isset($item['allowed_methods']) ? $item['allowed_methods'] : ['GET'],
-            ];
-        }, $this->getAll());
+        return array_map(
+            function ($item) {
+                return [
+                    "name" => $item['name'],
+                    "path" => $item['path'],
+                    "allowed_methods" => isset($item['allowed_methods']) ? $item['allowed_methods'] : ['GET'],
+                ];
+            },
+            $this->getAll()
+        );
     }
 }

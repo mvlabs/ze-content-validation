@@ -3,7 +3,7 @@
  * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
  *
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
- * @license MIT
+ * @license   MIT
  */
 namespace ZE\ContentValidation\Validator;
 
@@ -15,7 +15,7 @@ use ZE\ContentValidation\Extractor\OptionsExtractor;
  * Class ValidatorHandlerFactory
  *
  * @package ZE\ContentValidation\Validator
- * @author Diego Drigani <d.drigani@mvlabs.it>
+ * @author  Diego Drigani <d.drigani@mvlabs.it>
  */
 class ValidatorHandlerFactory
 {
