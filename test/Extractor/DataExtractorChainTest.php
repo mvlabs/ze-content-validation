@@ -2,7 +2,7 @@
 
 namespace ZETest\ContentValidation\Validator;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_TestCase;
 use ZE\ContentValidation\Extractor\BodyExtractor;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
 use ZE\ContentValidation\Extractor\DataExtractorInterface;
@@ -11,7 +11,7 @@ use ZE\ContentValidation\Extractor\QueryExtractor;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\UploadedFile;
 
-class DataExtractorChainTest extends TestCase
+class DataExtractorChainTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetDataFromRequestFromEmptyChain()
     {
