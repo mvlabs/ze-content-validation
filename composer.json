@@ -41,7 +41,8 @@
         "filp/whoops": "^1.1",
         "robmorgan/phinx": "^0.4.6",
         "fzaninotto/faker": "^1.5",
-        "codeception/codeception": "*"
+        "codeception/codeception": "*",
+        "zendframework/zend-expressive-zendrouter": "^1.2"
     },
     "autoload": {
         "psr-4": {
