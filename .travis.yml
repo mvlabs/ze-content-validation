@@ -60,5 +60,4 @@ install:
 
 script:
   - composer test
-  - bin/atoum --test-all
   - if [[ $CS_CHECK == 'true' ]]; then composer cs-check ; fi

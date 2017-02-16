@@ -1,7 +1,6 @@
 Zend Expressive Content Validation 
 ====
 [![Build Status](https://travis-ci.org/mvlabs/ze-content-validation.svg?branch=master)](https://travis-ci.org/mvlabs/ze-content-validation)
-[![Coverage Status](https://coveralls.io/repos/github/mvlabs/ze-content-validation/badge.svg?branch=master)](https://coveralls.io/github/mvlabs/ze-content-validation?branch=master)
 
 Introduction
 ------------
