@@ -66,7 +66,7 @@ class OptionsExtractor
     /**
      * @return array
      */
-    public function getAll()
+    private function getAll()
     {
         return $this->config;
     }

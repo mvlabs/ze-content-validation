@@ -39,7 +39,7 @@ class FileExtractor implements DataExtractorInterface
      * @param UploadedFileInterface $uploadedFile
      * @return array
      */
-    public function uploadedFileToArray(UploadedFileInterface $uploadedFile)
+    private function uploadedFileToArray(UploadedFileInterface $uploadedFile)
     {
         if (! $uploadedFile->getError()) {
             $stream = $uploadedFile->getStream();

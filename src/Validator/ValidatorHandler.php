@@ -81,15 +81,16 @@ class ValidatorHandler implements ValidatorInterface
      * or null otherwise
      *
      * @param  ServerRequestInterface $request
-     * @return ValidationRulesInterface
+     * @return InputFilter|null
      */
     private function getValidatorObject(ServerRequestInterface $request)
     {
         $routeConfig = $this->optionsExtractor->getOptionsForRequest($request);
-        $method = strtolower($request->getMethod());
-        $validation = array_change_key_case($routeConfig['validation'], CASE_LOWER);
 
         if (isset($routeConfig['validation'])) {
+            $method = strtolower($request->getMethod());
+            $validation = array_change_key_case($routeConfig['validation'], CASE_LOWER);
+
             if (array_key_exists($method, $validation)) {
                 return $this->getInputFilter($validation[$method]);
             } elseif (array_key_exists('*', $validation)) {
@@ -102,7 +103,7 @@ class ValidatorHandler implements ValidatorInterface
 
     /**
      * @param $inputFilterService
-     * @return mixed
+     * @return InputFilter
      * @throws ValidationClassNotExists
      */
     private function getInputFilter($inputFilterService)
