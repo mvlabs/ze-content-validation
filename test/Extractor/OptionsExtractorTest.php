@@ -84,15 +84,6 @@ class OptionExtractorTest extends PHPUnit_Framework_TestCase
         );
     }
 
-    public function testGetAllOptionsExistWithRouteMatchReturnsARightValidatorConfig()
-    {
-        $optionExtractor = new OptionsExtractor($this->config, $this->router);
-        $this->assertEquals(
-            $this->config,
-            $optionExtractor->getAll()
-        );
-    }
-
     /**
      * @dataProvider sanitizeProvider
      */
