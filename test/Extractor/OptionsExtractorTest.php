@@ -1,15 +1,18 @@
 <?php
 namespace ZETest\ContentValidation\Validator;
 
+use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_TestCase;
+use Psr\Http\Message\ServerRequestInterface;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
 use Zend\Diactoros\Uri;
+use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Router\ZendRouter;
 use Zend\Stratigility\Http\Request;
 
-class OptionExtractorTest extends PHPUnit_Framework_TestCase
+class OptionExtractorTest extends TestCase
 {
     private $config;
     /**
@@ -30,14 +33,11 @@ class OptionExtractorTest extends PHPUnit_Framework_TestCase
                 'options' => []
             ]
         ];
-        $routeResult = RouteResult::fromRouteMatch(
-            $this->config[0]['name'],
-            function () {
-            },
-            [
-                'id' => '1234'
-            ]
-        );
+        $params = $this->config[0]['options'];
+        $route = $this->prophesize(Route::class);
+        $route->getName()->willReturn('contacts');
+        $routeResult = RouteResult::fromRoute($route->reveal(), $params);
+
         $router = $this->getMockBuilder(ZendRouter::class)->getMock();
         $router->expects($this->any())
             ->method('match')
@@ -67,6 +67,7 @@ class OptionExtractorTest extends PHPUnit_Framework_TestCase
          */
         $this->applyValidationConfig();
         $optionExtractor = new OptionsExtractor($this->config, $this->router);
+
         $this->assertEquals(
             $this->config[0]['options'],
             $optionExtractor->getOptionsForRequest(
@@ -76,6 +77,7 @@ class OptionExtractorTest extends PHPUnit_Framework_TestCase
         /**
          * Test options exist no route match
          */
+
         $this->assertEquals(
             $this->config[0]['options'],
             $optionExtractor->getOptionsForRequest(
@@ -118,7 +120,7 @@ class OptionExtractorTest extends PHPUnit_Framework_TestCase
      */
     private function getRequestMock($uriString, $method = 'GET')
     {
-        $requestMock = $this->getMockBuilder(Request::class)
+        $requestMock = $this->getMockBuilder(ServerRequestInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $uri = new Uri($uriString);
@@ -143,5 +145,14 @@ class OptionExtractorTest extends PHPUnit_Framework_TestCase
                 '*' => ContactInputFilter::class
             ]
         ];
+        $params = $this->config[0]['options'];
+        $route = $this->prophesize(Route::class);
+        $routeResult = RouteResult::fromRoute($route->reveal(), $params);
+        $route->getName()->willReturn('contacts');
+        $router = $this->getMockBuilder(ZendRouter::class)->getMock();
+        $router->expects($this->any())
+            ->method('match')
+            ->willReturn($routeResult);
+        $this->router = $router;
     }
 }

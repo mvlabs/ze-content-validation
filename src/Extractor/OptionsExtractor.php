@@ -52,10 +52,10 @@ class OptionsExtractor
         /**
          * @var RouteResult $routeMatch
          */
-        $routePath = $this->router->match($request)->getMatchedRouteName();
-
+        $matchedRoute = $this->router->match($request)->getMatchedRoute();
+        
         foreach ($this->config as $route) {
-            if ($route['name'] === $routePath) {
+            if ($route['name'] === $matchedRoute->getName()) {
                 return isset($route['options']) ? $route['options'] : [];
             }
         }
