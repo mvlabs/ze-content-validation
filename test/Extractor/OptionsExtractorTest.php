@@ -1,7 +1,6 @@
 <?php
 namespace ZETest\ContentValidation\Validator;
 
-use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
@@ -12,7 +11,7 @@ use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Router\ZendRouter;
 use Zend\Stratigility\Http\Request;
 
-class OptionExtractorTest extends TestCase
+class OptionExtractorTest extends PHPUnit_Framework_TestCase
 {
     private $config;
     /**
