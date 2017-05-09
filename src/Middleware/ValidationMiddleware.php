@@ -14,14 +14,13 @@ use ZE\ContentValidation\Exception\ValidationException;
 use ZE\ContentValidation\Validator\ValidationResult;
 use ZE\ContentValidation\Validator\ValidatorHandler;
 
-
 /**
  * Class ValidationMiddleware
  *
  * @package ZE\ContentValidation\Middleware
  * @author  Diego Drigani<d.drigani@mvlabs.it>
  */
-class ValidationMiddleware  implements ServerMiddlewareInterface
+class ValidationMiddleware implements ServerMiddlewareInterface
 {
     /**
      * @var ValidatorHandler
