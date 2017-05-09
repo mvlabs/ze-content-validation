@@ -26,25 +26,16 @@ $ composer require mvlabs/ze-content-validation
 Configuration
 =============
 
-The following configuration is defined in the routes configuration file. 
-The `validation` key is an array of mappings that determine which HTTP method to respond to and what input
-filter to map to for the given request. The keys for the mapping can either be an HTTP method or `*` wildcard for 
-applying to any http method.
+The ze-content-validation key is a mapping between routes names as the key, and the value being an array of
+mappings that determine which HTTP method to respond to and what input filter to map to for the given request. 
+The keys for the mapping can either be an HTTP method or `*` wildcard for applying to any http method.
 
 Example:
 ```php
-'routes' => [
-    [
-        'name' => 'user',
-        'path' => '/user/{id}',
-        'allowed_methods' => ['POST'],
-        'middleware' => UserAction::class,
-        'options' => [
-            'validation' =>  [
-                'POST' =>  \App\InputFilter\UserInputFilter::class
-            ]
-        ]
-    ]
+'ze-content-validation' => [
+    'user.add' => [
+        'POST' =>  \App\InputFilter\UserInputFilter::class
+    ],
 ],
 ```
 In the above example, the \App\InputFilter\UserInputFilter will be selected for POST requests.

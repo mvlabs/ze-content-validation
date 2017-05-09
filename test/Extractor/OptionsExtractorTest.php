@@ -14,6 +14,7 @@ use Zend\Stratigility\Http\Request;
 class OptionExtractorTest extends PHPUnit_Framework_TestCase
 {
     private $config;
+    private $configValidation;
     /**
      * @var RouterInterface $router
      */
@@ -22,6 +23,7 @@ class OptionExtractorTest extends PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
+        $this->configValidation = [];
         $this->config = [
             [
                 'name' => 'contacts',
@@ -49,7 +51,7 @@ class OptionExtractorTest extends PHPUnit_Framework_TestCase
         /**
          * Test no options with route match
          */
-        $optionExtractor = new OptionsExtractor($this->config, $this->router);
+        $optionExtractor = new OptionsExtractor($this->configValidation, $this->router);
         $this->assertEquals(
             [],
             $optionExtractor->getOptionsForRequest(
@@ -65,7 +67,7 @@ class OptionExtractorTest extends PHPUnit_Framework_TestCase
          * Test options exist with route match
          */
         $this->applyValidationConfig();
-        $optionExtractor = new OptionsExtractor($this->config, $this->router);
+        $optionExtractor = new OptionsExtractor($this->configValidation, $this->router);
 
         $this->assertEquals(
             $this->config[0]['options'],
@@ -83,33 +85,6 @@ class OptionExtractorTest extends PHPUnit_Framework_TestCase
                 $this->getRequestMock('')
             )
         );
-    }
-
-    /**
-     * @dataProvider sanitizeProvider
-     */
-    public function testAllSanitizedWithRouteMatchReturnsARightConfig($key, $value)
-    {
-        $this->applyValidationConfig();
-        $optionExtractor = new OptionsExtractor($this->config, $this->router);
-        $result = $optionExtractor->getAllSanitize();
-        $this->assertEquals($result[0][$key], $value);
-        $this->assertCount(3, $result[0]);
-    }
-
-    public function sanitizeProvider()
-    {
-        return [
-            [
-                'name', 'contacts'
-            ],
-            [
-                'path', '/contacts[/:id]'
-            ],
-            [
-                'allowed_methods', ['GET', 'DELETE', 'PATCH', 'PUT', 'POST']
-            ]
-        ];
     }
 
     /**
@@ -139,8 +114,8 @@ class OptionExtractorTest extends PHPUnit_Framework_TestCase
      */
     private function applyValidationConfig()
     {
-        $this->config[0]['options'] = [
-            'validation' => [
+        $this->configValidation[0] = [
+            [
                 '*' => ContactInputFilter::class
             ]
         ];

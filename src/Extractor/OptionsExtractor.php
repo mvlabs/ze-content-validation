@@ -30,7 +30,6 @@ class OptionsExtractor
      */
     private $router;
 
-
     /**
      * OptionsExtractor constructor.
      *
@@ -53,15 +52,14 @@ class OptionsExtractor
          * @var RouteResult $routeMatch
          */
         $matchedRoute = $this->router->match($request)->getMatchedRoute();
-
-        foreach ($this->config as $route) {
-            if ($route['name'] === $matchedRoute->getName()) {
-                return isset($route['options']) ? $route['options'] : [];
+        foreach ($this->config as $routeName => $options) {
+            if ($routeName === $matchedRoute->getName()) {
+                return isset($options) ? $options : [];
             }
         }
+
         return [];
     }
-
 
     /**
      * @return array
@@ -69,23 +67,5 @@ class OptionsExtractor
     private function getAll()
     {
         return $this->config;
-    }
-
-
-    /**
-     * @return array
-     */
-    public function getAllSanitize()
-    {
-        return array_map(
-            function ($item) {
-                return [
-                    "name" => $item['name'],
-                    "path" => $item['path'],
-                    "allowed_methods" => isset($item['allowed_methods']) ? $item['allowed_methods'] : ['GET'],
-                ];
-            },
-            $this->getAll()
-        );
     }
 }

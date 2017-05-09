@@ -85,11 +85,11 @@ class ValidatorHandler implements ValidatorInterface
      */
     private function getValidatorObject(ServerRequestInterface $request)
     {
-        $routeConfig = $this->optionsExtractor->getOptionsForRequest($request);
+        $routeValidationConfig = $this->optionsExtractor->getOptionsForRequest($request);
 
-        if (isset($routeConfig['validation'])) {
+        if (isset($routeValidationConfig)) {
             $method = strtolower($request->getMethod());
-            $validation = array_change_key_case($routeConfig['validation'], CASE_LOWER);
+            $validation = array_change_key_case($routeValidationConfig, CASE_LOWER);
 
             if (array_key_exists($method, $validation)) {
                 return $this->getInputFilter($validation[$method]);

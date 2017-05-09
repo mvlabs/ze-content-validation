@@ -20,6 +20,12 @@ class OptionsExtractorFactory
 {
     public function __invoke(ContainerInterface $container)
     {
-        return new OptionsExtractor($container->get('config')['routes'], $container->get(RouterInterface::class));
+        $validationConfig = $container->get('config')['ze-content-validation'] ?? [];
+        return new OptionsExtractor(
+            $validationConfig,
+            $container->get(
+                RouterInterface::class
+            )
+        );
     }
 }
