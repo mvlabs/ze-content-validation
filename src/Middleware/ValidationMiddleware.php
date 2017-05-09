@@ -7,12 +7,13 @@
  */
 namespace ZE\ContentValidation\Middleware;
 
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface as ServerMiddlewareInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use ZE\ContentValidation\Exception\ValidationException;
 use ZE\ContentValidation\Validator\ValidationResult;
 use ZE\ContentValidation\Validator\ValidatorHandler;
-use Zend\Stratigility\MiddlewareInterface;
+
 
 /**
  * Class ValidationMiddleware
@@ -20,7 +21,7 @@ use Zend\Stratigility\MiddlewareInterface;
  * @package ZE\ContentValidation\Middleware
  * @author  Diego Drigani<d.drigani@mvlabs.it>
  */
-class ValidationMiddleware implements MiddlewareInterface
+class ValidationMiddleware  implements ServerMiddlewareInterface
 {
     /**
      * @var ValidatorHandler
@@ -37,15 +38,7 @@ class ValidationMiddleware implements MiddlewareInterface
         $this->validator = $validator;
     }
 
-    /**
-     * Validates the request
-     *
-     * @param      Request       $request
-     * @param      Response      $response
-     * @param      callable|null $out
-     * @inheritdoc
-     */
-    public function __invoke(Request $request, Response $response, callable $out = null)
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         /**
          * @var ValidationResult $validationResult
@@ -53,20 +46,15 @@ class ValidationMiddleware implements MiddlewareInterface
         $validationResult = $this->validator->validate($request);
 
         if ($validationResult instanceof ValidationResult && ! $validationResult->isValid()) {
-            $request = $request->withAttribute('validationResult', $validationResult);
-
-            $validationException = new ValidationException(
+            throw new ValidationException(
                 'Failed Validation',
                 422,
                 null,
                 [],
                 ['validation_messages' => $validationResult->getMessages()]
             );
-
-
-            return $out($request, $response->withStatus(422), $validationException);
         }
 
-        return $out($request, $response);
+        return $delegate->process($request);
     }
 }
