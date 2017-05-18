@@ -9,10 +9,12 @@ namespace ZE\ContentValidation\Middleware;
 
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface as ServerMiddlewareInterface;
+use LosMiddleware\ApiProblem\ErrorResponseGenerator;
 use Psr\Http\Message\ServerRequestInterface;
 use ZE\ContentValidation\Exception\ValidationException;
 use ZE\ContentValidation\Validator\ValidationResult;
 use ZE\ContentValidation\Validator\ValidatorHandler;
+use Zend\Diactoros\Response\JsonResponse;
 
 /**
  * Class ValidationMiddleware
@@ -23,6 +25,10 @@ use ZE\ContentValidation\Validator\ValidatorHandler;
 class ValidationMiddleware implements ServerMiddlewareInterface
 {
     /**
+     * @var ErrorResponseGenerator
+     */
+    private $errorResponseGenerator;
+    /**
      * @var ValidatorHandler
      */
     private $validator;
@@ -31,10 +37,12 @@ class ValidationMiddleware implements ServerMiddlewareInterface
      * ValidationMiddleware constructor.
      *
      * @param ValidatorHandler $validator
+     * @param ErrorResponseGenerator $errorResponseGenerator
      */
-    public function __construct(ValidatorHandler $validator)
+    public function __construct(ValidatorHandler $validator, ErrorResponseGenerator $errorResponseGenerator)
     {
         $this->validator = $validator;
+        $this->errorResponseGenerator = $errorResponseGenerator;
     }
 
     public function process(ServerRequestInterface $request, DelegateInterface $delegate)
@@ -45,13 +53,15 @@ class ValidationMiddleware implements ServerMiddlewareInterface
         $validationResult = $this->validator->validate($request);
 
         if ($validationResult instanceof ValidationResult && ! $validationResult->isValid()) {
-            throw new ValidationException(
+            $e = new ValidationException(
                 'Failed Validation',
                 422,
                 null,
                 [],
-                ['validation_messages' => $validationResult->getMessages()]
+                ['errors' => $validationResult->getMessages()]
             );
+
+            return ($this->errorResponseGenerator)($e, $request, new JsonResponse([]));
         }
 
         return $delegate->process($request);
