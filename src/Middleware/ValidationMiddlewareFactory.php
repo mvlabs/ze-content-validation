@@ -8,6 +8,7 @@
 namespace ZE\ContentValidation\Middleware;
 
 use Interop\Container\ContainerInterface;
+use LosMiddleware\ApiProblem\ErrorResponseGenerator;
 use ZE\ContentValidation\Validator\ValidatorHandler;
 
 /**
@@ -25,7 +26,8 @@ class ValidationMiddlewareFactory
     public function __invoke(ContainerInterface $container)
     {
         return new ValidationMiddleware(
-            $container->get(ValidatorHandler::class)
+            $container->get(ValidatorHandler::class),
+            $container->get(ErrorResponseGenerator::class)
         );
     }
 }
