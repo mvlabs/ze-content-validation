@@ -113,7 +113,7 @@ In alternative, to use the built-in ConfigProvider, create a config file with th
 return (new ZE\ContentValidation\ConfigProvider())->__invoke();
 ```
 
-###Validating
+### Validating
 In the following request, an email value is provided with an invalid format, and the displayName field is omitted 
 entirely:
 ```json
