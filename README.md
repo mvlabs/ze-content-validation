@@ -11,8 +11,7 @@ Allows the following:
 
 - Defining named input filters.
 - Mapping named input filters to routes.
-- On invalid input throws an ApiException with validation error messages that will be handled by 
-`LosMiddleware\ApiProblem\ApiProblem::class` as `Zend\Expressive\FinalHandler`.
+- Returning an `ApiProblemResponse` with validation error messages on invalid input.
 
 Installation
 ------------
@@ -54,7 +53,7 @@ Example:
     'input_filter_specs' => [
         'App\\InputFilter\\LoginInputFilter' => [
             0 => [
-                'name' => 'username',
+                'name' => 'displayName',
                 'required' => true,
                 'filters' =>[],
                 'validators' => [
@@ -89,17 +88,22 @@ Example:
 To get things easily working, a ConfigProvider is included, which automatically registers all the dependencies in the 
 service container (including the `Zend\Expressive\FinalHandler` service).
 
-If your are using the Expressive's ConfigManager ([mtymek/expressive-config-manager](https://github.com/mtymek/expressive-config-manager)), you can just pass the class name to it like this:
+If your are using the Expressive's ConfigManager ([zendframework/zend-config-aggregator](https://github.com/zendframework/zend-config-aggregator)), you can just pass the class name to it like this:
 
 ```php
-return (new Zend\Expressive\ConfigManager\ConfigManager(
+$aggregator = new ConfigAggregator(
     [
         ZE\ContentValidation\ConfigProvider::class,
-        new Zend\Expressive\ConfigManager\ZendConfigProvider('config/{autoload/{{,*.}global,{,*.}local},params/generated_config}.php'),
-    ],
-    'data/cache/app_config.php'))->getMergedConfig();
+        new PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
+    ], 
+    $cacheConfig['config_cache_path']
+);
+
+return $aggregator->getMergedConfig();
+
+    
 ```
-more [about config manager](https://zendframework.github.io/zend-expressive/cookbook/modular-layout/).
+more [about config manager](https://zendframework.github.io/zend-expressive/features/modular-applications/).
 
 
 In alternative, to use the built-in ConfigProvider, create a config file with this contents:
@@ -109,3 +113,39 @@ In alternative, to use the built-in ConfigProvider, create a config file with th
 return (new ZE\ContentValidation\ConfigProvider())->__invoke();
 ```
 
+###Validating
+In the following request, an email value is provided with an invalid format, and the displayName field is omitted 
+entirely:
+```json
+POST /users HTTP/1.1
+Accept: application/json
+Content-Type: application/json; charset=utf-8
+
+{
+    "email": "foo",
+    "password": "mySecretPassword!"
+    
+}
+```
+
+The response:
+
+```json
+HTTP/1.1 422 Unprocessable Entity
+Content-Type: application/problem+json
+
+{
+  "detail": "Validation Failed"
+  "status": 422,
+  "title": "Unprocessable Entity",
+  "type": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html",
+  "errors": {
+    "email": {
+        "emailAddressInvalidFormat": "The input is not a valid email address. Use the basic format local-part@hostname"
+    },
+    "displayName": {
+      "isEmpty": "Value is required and can't be empty"
+    }    
+  },
+}
+```
