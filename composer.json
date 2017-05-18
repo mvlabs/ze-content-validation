@@ -64,7 +64,9 @@
         "cs-fix": "phpcbf",
         "test": "phpunit"
     },
-    "suggest": {
-        "mtymek/expressive-config-manager": "Allows collecting and merging configuration from different sources"
+    "extra": {
+        "zf": {
+            "config-provider": "ZE\\ContentValidation\\ConfigProvider"
+        }
     }
 }
