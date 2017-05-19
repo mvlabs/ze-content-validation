@@ -43,7 +43,7 @@ In the above example, the \App\InputFilter\UserInputFilter will be selected for 
 
 `input_filter_spec` is for configuration-driven creation of input filters.  The keys for this array
 will be a unique name, but more often based off the service name it is mapped to under the
-`options => validation` key in the routes configuration file. The values will be an input filter configuration array, as is
+`ze-content-validation` key. The values will be an input filter configuration array, as is
 described in the ZF2 manual [section on input
 filters](http://zf2.readthedocs.org/en/latest/modules/zend.input-filter.intro.html).
 
