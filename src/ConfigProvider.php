@@ -8,6 +8,8 @@
 namespace ZE\ContentValidation;
 
 use LosMiddleware\ApiProblem;
+use ZE\ContentValidation\Extractor\ParamsExtractor;
+use ZE\ContentValidation\Extractor\ParamsExtractorFactory;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
 use ZE\ContentValidation\Extractor\DataExtractorChainFactory;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
@@ -51,6 +53,7 @@ class ConfigProvider
                 ValidatorHandler::class => ValidatorHandlerFactory::class,
                 InputFilterPluginManager::class => InputFilterManagerFactory::class,
                 OptionsExtractor::class => OptionsExtractorFactory::class,
+                ParamsExtractor::class => ParamsExtractorFactory::class,
                 DataExtractorChain::class => DataExtractorChainFactory::class,
                 ErrorHandler::class => ApiProblem\ErrorHandlerFactory::class,
                 ApiProblem\ErrorResponseGenerator::class => ApiProblem\ErrorResponseGeneratorFactory::class,

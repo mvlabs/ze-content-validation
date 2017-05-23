@@ -3,6 +3,9 @@
 namespace ZETest\ContentValidation\Validator;
 
 use PHPUnit_Framework_TestCase;
+use Zend\Expressive\Router\Route;
+use Zend\Expressive\Router\RouteResult;
+use ZE\ContentValidation\Extractor\ParamsExtractor;
 use ZE\ContentValidation\Extractor\BodyExtractor;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
 use ZE\ContentValidation\Extractor\DataExtractorInterface;
@@ -10,8 +13,9 @@ use ZE\ContentValidation\Extractor\FileExtractor;
 use ZE\ContentValidation\Extractor\QueryExtractor;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\UploadedFile;
+use Zend\Expressive\Router\ZendRouter;
 
-class DataExtractorChainTest extends \PHPUnit_Framework_TestCase
+class DataExtractorChainTest extends PHPUnit_Framework_TestCase
 {
     public function testGetDataFromRequestFromEmptyChain()
     {
@@ -125,6 +129,36 @@ class DataExtractorChainTest extends \PHPUnit_Framework_TestCase
         $extractor->expects(self::any())->method('extractData')->will(self::returnValue(new \stdClass()));
 
         $dataExtractorChain->getDataFromRequest($request);
+    }
+
+    public function testParamsExtractorExtractDataFromRequestOnPostAndIsOk()
+    {
+        $routeParams = ['id' => 1];
+        $route = $this->prophesize(Route::class);
+        $route->getName()->willReturn('contacts');
+        $routeResult = RouteResult::fromRoute($route->reveal(), $routeParams);
+
+        $router = $this->getMockBuilder(ZendRouter::class)->getMock();
+        $router->expects($this->any())
+            ->method('match')
+            ->willReturn($routeResult);
+        $extractor = new ParamsExtractor($router);
+
+        $data = [
+            'Foo' => 'FooBar',
+            'Fizz' => 'Buzz',
+        ];
+
+        $request = ServerRequestFactory::fromGlobals()
+            ->withMethod('PUT')
+            ->withParsedBody($data);
+
+        $actual = $extractor->extractData($request);
+
+        self::assertArraySubset(
+            $routeParams,
+            $actual
+        );
     }
 
     public function testBodyExtractorExtractDataFromRequestOnPostAndIsOk()
