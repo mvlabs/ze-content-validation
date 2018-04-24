@@ -1,11 +1,22 @@
 <?php
-
+/**
+ * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ *
+ * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @license   MIT
+ */
 namespace ZE\ContentValidation\Middleware;
 
 use Interop\Container\ContainerInterface;
-use ZE\ContentValidation\Middleware\ValidationMiddleware;
+use LosMiddleware\ApiProblem\ErrorResponseGenerator;
 use ZE\ContentValidation\Validator\ValidatorHandler;
 
+/**
+ * Class ValidationMiddlewareFactory
+ *
+ * @package ZE\ContentValidation\Middleware
+ * @author  Diego Drigani<d.drigani@mvlabs.it>
+ */
 class ValidationMiddlewareFactory
 {
     /**
@@ -15,7 +26,8 @@ class ValidationMiddlewareFactory
     public function __invoke(ContainerInterface $container)
     {
         return new ValidationMiddleware(
-            $container->get(ValidatorHandler::class)
+            $container->get(ValidatorHandler::class),
+            $container->get(ErrorResponseGenerator::class)
         );
     }
 }

@@ -1,64 +1,69 @@
 <?php
-
+/**
+ * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ *
+ * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @license   MIT
+ */
 namespace ZE\ContentValidation\Middleware;
 
-
-use LosMiddleware\ApiProblem\Exception\ApiException;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface as ServerMiddlewareInterface;
+use LosMiddleware\ApiProblem\ErrorResponseGenerator;
+use Psr\Http\Message\ServerRequestInterface;
 use ZE\ContentValidation\Exception\ValidationException;
 use ZE\ContentValidation\Validator\ValidationResult;
 use ZE\ContentValidation\Validator\ValidatorHandler;
-use Zend\InputFilter\InputFilterInterface;
-use Zend\Stratigility\MiddlewareInterface;
+use Zend\Diactoros\Response\JsonResponse;
 
-
-class ValidationMiddleware implements MiddlewareInterface
+/**
+ * Class ValidationMiddleware
+ *
+ * @package ZE\ContentValidation\Middleware
+ * @author  Diego Drigani<d.drigani@mvlabs.it>
+ */
+class ValidationMiddleware implements ServerMiddlewareInterface
 {
+    /**
+     * @var ErrorResponseGenerator
+     */
+    private $errorResponseGenerator;
     /**
      * @var ValidatorHandler
      */
     private $validator;
 
     /**
-     * @codeCoverageIgnore
+     * ValidationMiddleware constructor.
+     *
      * @param ValidatorHandler $validator
+     * @param ErrorResponseGenerator $errorResponseGenerator
      */
-    public function __construct(ValidatorHandler $validator)
+    public function __construct(ValidatorHandler $validator, ErrorResponseGenerator $errorResponseGenerator)
     {
         $this->validator = $validator;
+        $this->errorResponseGenerator = $errorResponseGenerator;
     }
 
-    /**
-     * Validates the request
-     * @param Request $request
-     * @param Response $response
-     * @param callable|null $out
-     * @inheritdoc
-     */
-    public function __invoke(Request $request, Response $response, callable $out = null)
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         /**
-         * @var InputFilterInterface $inputFilter
+         * @var ValidationResult $validationResult
          */
-        $inputFilter = $this->validator->validate($request);
+        $validationResult = $this->validator->validate($request);
 
-        if ($inputFilter instanceof InputFilterInterface  && !$inputFilter->isValid()) {
-
-            $request = $request->withAttribute('inputFilter', $inputFilter);
-
-            $validationException = new ValidationException(
+        if ($validationResult instanceof ValidationResult && ! $validationResult->isValid()) {
+            $e = new ValidationException(
                 'Failed Validation',
-                406,
+                422,
                 null,
                 [],
-                ['validation_messages' => $inputFilter->getMessages()]
+                ['errors' => $validationResult->getMessages()]
             );
 
-
-            return $out($request, $response->withStatus(406), $validationException);
+            return ($this->errorResponseGenerator)($e, $request, new JsonResponse([]));
         }
 
-        return $out($request, $response);
+        return $delegate->process($request);
     }
 }

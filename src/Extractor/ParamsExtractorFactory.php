@@ -8,14 +8,15 @@
 namespace ZE\ContentValidation\Extractor;
 
 use Interop\Container\ContainerInterface;
+use Zend\Expressive\Router\RouterInterface;
 
 /**
- * Class DataExtractorChainFactory
+ * Class ParamsExtractorFactory
  *
  * @package ZE\ContentValidation\Extractor
  * @author  Diego Drigani <d.drigani@mvlabs.it>
  */
-class DataExtractorChainFactory
+class ParamsExtractorFactory
 {
     /**
      * @param ContainerInterface $container
@@ -23,13 +24,6 @@ class DataExtractorChainFactory
      */
     public function __invoke(ContainerInterface $container)
     {
-        $extractors = [
-            new QueryExtractor(),
-            new BodyExtractor(),
-            new FileExtractor(),
-            $container->get(ParamsExtractor::class)
-        ];
-
-        return new DataExtractorChain($extractors);
+        return new ParamsExtractor($container->get(RouterInterface::class));
     }
 }

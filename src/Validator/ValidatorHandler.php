@@ -1,19 +1,25 @@
 <?php
-
+/**
+ * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ *
+ * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @license   MIT
+ */
 namespace ZE\ContentValidation\Validator;
 
 use Psr\Http\Message\ServerRequestInterface;
 use ZE\ContentValidation\Exception\ValidationClassNotExists;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
-use Zend\Expressive\Router\RouterInterface;
 use Zend\InputFilter\InputFilter;
 use Zend\InputFilter\InputFilterInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class Validator
+ * Class ValidatorHandler
+ *
  * @package ZE\ContentValidation\Validator
+ * @author  Diego Drigani <d.drigani@mvlabs.it>
  */
 class ValidatorHandler implements ValidatorInterface
 {
@@ -21,11 +27,6 @@ class ValidatorHandler implements ValidatorInterface
      * @var OptionsExtractor
      */
     private $optionsExtractor;
-
-    /**
-     * @var RouterInterface
-     */
-    private $router;
 
     /**
      * @var DataExtractorChain
@@ -40,36 +41,36 @@ class ValidatorHandler implements ValidatorInterface
 
     /**
      * ValidatorHandler constructor.
-     * @param OptionsExtractor $optionsExtractor
-     * @param DataExtractorChain $dataExtractorChain
-     * @param RouterInterface $router
+     *
+     * @param OptionsExtractor        $optionsExtractor
+     * @param DataExtractorChain      $dataExtractorChain
      * @param ServiceLocatorInterface $inputFilterManager
      */
     public function __construct(
         OptionsExtractor $optionsExtractor,
         DataExtractorChain $dataExtractorChain,
-        RouterInterface $router,
         ServiceLocatorInterface $inputFilterManager
     ) {
         $this->optionsExtractor = $optionsExtractor;
         $this->dataExtractorChain = $dataExtractorChain;
-        $this->router = $router;
         $this->inputFilterManager = $inputFilterManager;
     }
 
 
     /**
      * Validates the request
-     * @param ServerRequestInterface $request
+     *
+     * @param  ServerRequestInterface $request
      * @return bool|ValidationResult
      */
     public function validate(ServerRequestInterface $request)
     {
         $validatorProvider = $this->getValidatorObject($request);
+
         if ($validatorProvider instanceof InputFilterInterface) {
             $data = $this->dataExtractorChain->getDataFromRequest($request);
             $validatorProvider->setData($data);
-            return $validatorProvider;
+            return ValidationResult::buildFromInputFilter($validatorProvider, $request->getMethod());
         }
 
         return true;
@@ -78,16 +79,18 @@ class ValidatorHandler implements ValidatorInterface
     /**
      * Checks an returns the validation object
      * or null otherwise
-     * @param ServerRequestInterface $request
-     * @return ValidationRulesInterface
+     *
+     * @param  ServerRequestInterface $request
+     * @return InputFilter|null
      */
     private function getValidatorObject(ServerRequestInterface $request)
     {
-        $routeConfig = $this->optionsExtractor->getOptionsForRequest($request);
-        $method = strtolower($request->getMethod());
-        $validation = array_change_key_case($routeConfig['validation'], CASE_LOWER);
+        $routeValidationConfig = $this->optionsExtractor->getOptionsForRequest($request);
 
-        if (isset($routeConfig['validation'])) {
+        if (isset($routeValidationConfig)) {
+            $method = strtolower($request->getMethod());
+            $validation = array_change_key_case($routeValidationConfig, CASE_LOWER);
+
             if (array_key_exists($method, $validation)) {
                 return $this->getInputFilter($validation[$method]);
             } elseif (array_key_exists('*', $validation)) {
@@ -98,11 +101,22 @@ class ValidatorHandler implements ValidatorInterface
         return null;
     }
 
+    /**
+     * @param $inputFilterService
+     * @return InputFilter
+     * @throws ValidationClassNotExists
+     */
     private function getInputFilter($inputFilterService)
     {
         $inputFilter = $this->inputFilterManager->get($inputFilterService);
-        if (!$inputFilter instanceof InputFilter) {
-            throw new ValidationClassNotExists(sprintf('Listed input filter "%s" does not exist; cannot validate request', $inputFilterService));
+
+        if (! $inputFilter instanceof InputFilter) {
+            throw new ValidationClassNotExists(
+                sprintf(
+                    'Listed input filter "%s" does not exist; cannot validate request',
+                    $inputFilterService
+                )
+            );
         }
 
         return $this->inputFilterManager->get($inputFilterService);
