@@ -24,7 +24,7 @@
         "php": "^7.1",
         "roave/security-advisories": "dev-master",
         "zendframework/zend-expressive": "^3.0",
-        "zendframework/zend-filter": "^2.8",
+        "zendframework/zend-filter": "^2.7",
         "zendframework/zend-http": "^2.7",
         "zendframework/zend-inputfilter": "^2.8",
         "zendframework/zend-servicemanager": "^3.3",
