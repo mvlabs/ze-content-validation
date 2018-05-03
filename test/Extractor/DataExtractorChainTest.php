@@ -3,6 +3,8 @@
 namespace ZETest\ContentValidation\Validator;
 
 use PHPUnit_Framework_TestCase;
+use Prophecy\Argument;
+use Psr\Http\Server\MiddlewareInterface;
 use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\RouteResult;
 use ZE\ContentValidation\Extractor\ParamsExtractor;
@@ -14,6 +16,9 @@ use ZE\ContentValidation\Extractor\QueryExtractor;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\UploadedFile;
 use Zend\Expressive\Router\ZendRouter;
+use Zend\Router\Http\TreeRouteStack;
+use Zend\Http\Request as ZendRequest;
+use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 
 class DataExtractorChainTest extends PHPUnit_Framework_TestCase
 {
@@ -27,6 +32,11 @@ class DataExtractorChainTest extends PHPUnit_Framework_TestCase
 
 
         self::assertCount(0, $actual);
+    }
+
+    private function getMiddleware(): MiddlewareInterface
+    {
+        return $this->prophesize(MiddlewareInterface::class)->reveal();
     }
 
     public function testGetDataFromRequestDefaultExtraction()
@@ -136,17 +146,59 @@ class DataExtractorChainTest extends PHPUnit_Framework_TestCase
         $routeParams = ['id' => 1];
         $route = $this->prophesize(Route::class);
         $route->getName()->willReturn('contacts');
-        $routeResult = RouteResult::fromRoute($route->reveal(), $routeParams);
 
-        $router = $this->getMockBuilder(ZendRouter::class)->getMock();
-        $router->expects($this->any())
-            ->method('match')
-            ->willReturn($routeResult);
+        $routeMatch = new \Zend\Router\Http\RouteMatch($routeParams, 1);
+        $routeMatch->setMatchedRouteName('contacts');
+        $this->zendRouter = $this->prophesize(TreeRouteStack::class);
+        $this->zendRouter->match(Argument::type(ZendRequest::class))->willReturn($routeMatch);
+        $middleware = $this->getMiddleware();
+        $this->zendRouter->addRoute('contacts', [
+            'type' => 'segment',
+            'options' => [
+                'route' => '/contacts[/:id]',
+            ],
+            'may_terminate' => false,
+            'child_routes' => [
+                "GET:DELETE:PATCH:PUT:POST" => [
+                    'type' => 'method',
+                    'options' => [
+                        'verb' => "GET,DELETE,PATCH,PUT,POST",
+                        'defaults' => [
+                            'middleware' => $middleware,
+                        ],
+                    ],
+                ],
+                "method_not_allowed" => [
+                    "type" => "regex",
+                    "priority" => -1,
+                    "options" => [
+                        "regex" => "",
+                        "defaults" =>
+                            [
+                                "method_not_allowed" => "/contacts[/:id]"
+                            ],
+                        "spec" => ""
+                    ]
+                ]
+            ],
+        ])->shouldBeCalled();
+        $router = new ZendRouter($this->zendRouter->reveal());
+        $router->addRoute(new Route(
+            '/contacts[/:id]',
+            $middleware,
+            [
+                RequestMethod::METHOD_GET,
+                RequestMethod::METHOD_DELETE,
+                RequestMethod::METHOD_PATCH,
+                RequestMethod::METHOD_PUT,
+                RequestMethod::METHOD_POST
+            ],
+            'contacts'
+        ));
         $extractor = new ParamsExtractor($router);
 
         $data = [
-            'Foo' => 'FooBar',
-            'Fizz' => 'Buzz',
+            'id' => 1,
         ];
 
         $request = ServerRequestFactory::fromGlobals()

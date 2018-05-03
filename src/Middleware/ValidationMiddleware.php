@@ -7,14 +7,14 @@
  */
 namespace ZE\ContentValidation\Middleware;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface as ServerMiddlewareInterface;
-use LosMiddleware\ApiProblem\ErrorResponseGenerator;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface as ServerMiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use ZE\ContentValidation\Exception\ValidationException;
 use ZE\ContentValidation\Validator\ValidationResult;
 use ZE\ContentValidation\Validator\ValidatorHandler;
-use Zend\Diactoros\Response\JsonResponse;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 /**
  * Class ValidationMiddleware
@@ -25,9 +25,9 @@ use Zend\Diactoros\Response\JsonResponse;
 class ValidationMiddleware implements ServerMiddlewareInterface
 {
     /**
-     * @var ErrorResponseGenerator
+     * @var ProblemDetailsResponseFactory
      */
-    private $errorResponseGenerator;
+    private $problemDetailsFactory;
     /**
      * @var ValidatorHandler
      */
@@ -37,15 +37,18 @@ class ValidationMiddleware implements ServerMiddlewareInterface
      * ValidationMiddleware constructor.
      *
      * @param ValidatorHandler $validator
-     * @param ErrorResponseGenerator $errorResponseGenerator
+     * @param ProblemDetailsResponseFactory $problemDetailsFactory
      */
-    public function __construct(ValidatorHandler $validator, ErrorResponseGenerator $errorResponseGenerator)
-    {
+    public function __construct(
+        ValidatorHandler $validator,
+        ProblemDetailsResponseFactory $problemDetailsFactory
+    ) {
         $this->validator = $validator;
-        $this->errorResponseGenerator = $errorResponseGenerator;
+        $this->problemDetailsFactory = $problemDetailsFactory;
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         /**
          * @var ValidationResult $validationResult
@@ -53,17 +56,16 @@ class ValidationMiddleware implements ServerMiddlewareInterface
         $validationResult = $this->validator->validate($request);
 
         if ($validationResult instanceof ValidationResult && ! $validationResult->isValid()) {
-            $e = new ValidationException(
-                'Failed Validation',
+            return $this->problemDetailsFactory->createResponse(
+                $request,
                 422,
-                null,
-                [],
+                'Failed Validation',
+                '',
+                '',
                 ['errors' => $validationResult->getMessages()]
             );
-
-            return ($this->errorResponseGenerator)($e, $request, new JsonResponse([]));
         }
 
-        return $delegate->process($request);
+        return $handler->handle($request);
     }
 }
