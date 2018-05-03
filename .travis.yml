@@ -30,7 +30,7 @@ matrix:
     - php: 7.2
       env:
         - DEPS=locked
-        - PHPSTAN_CHECK=true
+        - TEST_COVERAGE=true
     - php: 7.2
       env:
         - DEPS=latest
@@ -47,10 +47,8 @@ install:
   - cat phpunit.xml.dist
 
 script:
-  - if [[ $TEST_COVERAGE == 'true' ]]; then composer test-coverage ; else composer test ; fi
+  - composer test
   - if [[ $CS_CHECK == 'true' ]]; then composer cs-check ; fi
-  - if [[ $CS_CHECK == 'true' ]]; then composer license-check ; fi
-  - if [[ $PHPSTAN_CHECK == 'true' ]]; then composer phpstan ; fi
 
 after_script:
   - if [[ $TEST_COVERAGE == 'true' ]]; then vendor/bin/php-coveralls -v ; fi
