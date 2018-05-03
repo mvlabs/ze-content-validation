@@ -5,11 +5,14 @@
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
  * @license   MIT
  */
+
+declare(strict_types=1);
+
 namespace ZE\ContentValidation\Middleware;
 
 use Interop\Container\ContainerInterface;
-use LosMiddleware\ApiProblem\ErrorResponseGenerator;
 use ZE\ContentValidation\Validator\ValidatorHandler;
+use Zend\ProblemDetails\ProblemDetailsResponseFactory;
 
 /**
  * Class ValidationMiddlewareFactory
@@ -27,7 +30,7 @@ class ValidationMiddlewareFactory
     {
         return new ValidationMiddleware(
             $container->get(ValidatorHandler::class),
-            $container->get(ErrorResponseGenerator::class)
+            $container->get(ProblemDetailsResponseFactory::class)
         );
     }
 }

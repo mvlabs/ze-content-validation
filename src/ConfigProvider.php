@@ -5,19 +5,22 @@
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
  * @license   MIT
  */
+
+declare(strict_types=1);
+
 namespace ZE\ContentValidation;
 
-use LosMiddleware\ApiProblem;
-use ZE\ContentValidation\Extractor\ParamsExtractor;
-use ZE\ContentValidation\Extractor\ParamsExtractorFactory;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
 use ZE\ContentValidation\Extractor\DataExtractorChainFactory;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
 use ZE\ContentValidation\Extractor\OptionsExtractorFactory;
+use ZE\ContentValidation\Extractor\ParamsExtractor;
+use ZE\ContentValidation\Extractor\ParamsExtractorFactory;
 use ZE\ContentValidation\Middleware\ValidationMiddleware;
 use ZE\ContentValidation\Middleware\ValidationMiddlewareFactory;
 use ZE\ContentValidation\Validator\ValidatorHandler;
 use ZE\ContentValidation\Validator\ValidatorHandlerFactory;
+use Zend\Expressive\Container\ErrorResponseGeneratorFactory;
 use Zend\Expressive\FinalHandler;
 use Zend\InputFilter\InputFilterPluginManager;
 use zf2timo\Bridge\Factory\InputFilterManagerFactory;
@@ -55,8 +58,7 @@ class ConfigProvider
                 OptionsExtractor::class => OptionsExtractorFactory::class,
                 ParamsExtractor::class => ParamsExtractorFactory::class,
                 DataExtractorChain::class => DataExtractorChainFactory::class,
-                ErrorHandler::class => ApiProblem\ErrorHandlerFactory::class,
-                ApiProblem\ErrorResponseGenerator::class => ApiProblem\ErrorResponseGeneratorFactory::class,
+                ErrorHandler::class => ErrorResponseGeneratorFactory::class,
             ],
             'aliases' => [
                 'InputFilterManager' => InputFilterPluginManager::class,
