@@ -64,7 +64,7 @@
         ],
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
-        "test": "phpunit --colors=always"
+        "test": "phpunit"
     },
     "extra": {
         "zf": {
