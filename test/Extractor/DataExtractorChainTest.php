@@ -1,24 +1,31 @@
 <?php
+/**
+ * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ *
+ * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @license   MIT
+ */
+
+declare(strict_types=1);
 
 namespace ZETest\ContentValidation\Validator;
 
+use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use PHPUnit_Framework_TestCase;
 use Prophecy\Argument;
 use Psr\Http\Server\MiddlewareInterface;
-use Zend\Expressive\Router\Route;
-use Zend\Expressive\Router\RouteResult;
-use ZE\ContentValidation\Extractor\ParamsExtractor;
 use ZE\ContentValidation\Extractor\BodyExtractor;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
 use ZE\ContentValidation\Extractor\DataExtractorInterface;
 use ZE\ContentValidation\Extractor\FileExtractor;
+use ZE\ContentValidation\Extractor\ParamsExtractor;
 use ZE\ContentValidation\Extractor\QueryExtractor;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\UploadedFile;
+use Zend\Expressive\Router\Route;
 use Zend\Expressive\Router\ZendRouter;
-use Zend\Router\Http\TreeRouteStack;
 use Zend\Http\Request as ZendRequest;
-use Fig\Http\Message\RequestMethodInterface as RequestMethod;
+use Zend\Router\Http\TreeRouteStack;
 
 class DataExtractorChainTest extends PHPUnit_Framework_TestCase
 {

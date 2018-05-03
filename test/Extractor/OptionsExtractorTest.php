@@ -1,4 +1,13 @@
 <?php
+/**
+ * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ *
+ * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @license   MIT
+ */
+
+declare(strict_types=1);
+
 namespace ZETest\ContentValidation\Validator;
 
 use PHPUnit_Framework_TestCase;

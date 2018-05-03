@@ -5,6 +5,9 @@
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
  * @license   MIT
  */
+
+declare(strict_types=1);
+
 namespace ZE\ContentValidation\Middleware;
 
 use Interop\Container\ContainerInterface;
