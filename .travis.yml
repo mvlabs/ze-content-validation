@@ -5,11 +5,11 @@ language: php
 cache:
   directories:
     - $HOME/.composer/cache
+    - vendor
 
 env:
   global:
-    - COMPOSER_ARGS="--no-interaction"
-    - COVERAGE_DEPS="php-coveralls/php-coveralls"
+    - COMPOSER_ARGS="--no-interaction --ignore-platform-reqs"
 
 matrix:
   include:
@@ -20,7 +20,6 @@ matrix:
       env:
         - DEPS=locked
         - CS_CHECK=true
-        - TEST_COVERAGE=true
     - php: 7.1
       env:
         - DEPS=latest
@@ -30,28 +29,24 @@ matrix:
     - php: 7.2
       env:
         - DEPS=locked
-        - TEST_COVERAGE=true
+        - CS_CHECK=true
     - php: 7.2
       env:
         - DEPS=latest
 
+notifications:
+  email: d.drigani@mvlabs.it
+
 before_install:
   - if [[ $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
+  - travis_retry composer self-update
 
 install:
-  - travis_retry composer install $COMPOSER_ARGS
   - if [[ $DEPS == 'latest' ]]; then travis_retry composer update $COMPOSER_ARGS ; fi
   - if [[ $DEPS == 'lowest' ]]; then travis_retry composer update --prefer-lowest --prefer-stable $COMPOSER_ARGS ; fi
-  - if [[ $TEST_COVERAGE == 'true' ]]; then travis_retry composer require --dev $COMPOSER_ARGS $COVERAGE_DEPS ; fi
-  - stty cols 120 && composer show
-  - cat phpunit.xml.dist
+  - travis_retry composer install $COMPOSER_ARGS
+  - composer show
 
 script:
   - composer test
   - if [[ $CS_CHECK == 'true' ]]; then composer cs-check ; fi
-
-after_script:
-  - if [[ $TEST_COVERAGE == 'true' ]]; then vendor/bin/php-coveralls -v ; fi
-
-notifications:
-  email: d.drigani@mvlabs.it
