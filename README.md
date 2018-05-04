@@ -107,7 +107,7 @@ HTTP/1.1 422 Unprocessable Entity
 Content-Type: application/problem+json
 
 {
-  "detail": "Validation Failed"
+  "detail": "Validation Failed",
   "status": 422,
   "title": "Unprocessable Entity",
   "type": "https://httpstatus.es/422",
