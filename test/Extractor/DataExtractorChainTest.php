@@ -8,10 +8,10 @@
 
 declare(strict_types=1);
 
-namespace ZETest\ContentValidation\Validator;
+namespace ZETest\ContentValidation\Extractor;
 
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Server\MiddlewareInterface;
 use ZE\ContentValidation\Extractor\BodyExtractor;
@@ -27,7 +27,7 @@ use Zend\Expressive\Router\ZendRouter;
 use Zend\Http\Request as ZendRequest;
 use Zend\Router\Http\TreeRouteStack;
 
-class DataExtractorChainTest extends PHPUnit_Framework_TestCase
+class DataExtractorChainTest extends TestCase
 {
     public function testGetDataFromRequestFromEmptyChain()
     {
@@ -184,7 +184,7 @@ class DataExtractorChainTest extends PHPUnit_Framework_TestCase
                             [
                                 "method_not_allowed" => "/contacts[/:id]"
                             ],
-                        "spec" => ""
+                            "spec" => ""
                     ]
                 ]
             ],

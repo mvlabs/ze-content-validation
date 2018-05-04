@@ -8,25 +8,23 @@
 
 declare(strict_types=1);
 
-namespace ZETest\ContentValidation\Validator;
+namespace ZETest\ContentValidation\Extractor;
 
-use PHPUnit_Framework_TestCase;
+use Fig\Http\Message\RequestMethodInterface as RequestMethod;
+use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
-use Zend\Diactoros\Uri;
 use Zend\Expressive\Router\Route;
-use Zend\Expressive\Router\RouteResult;
 use Zend\Expressive\Router\RouterInterface;
 use Zend\Expressive\Router\ZendRouter;
-use Fig\Http\Message\RequestMethodInterface as RequestMethod;
+use Zend\Http\Request as ZendRequest;
 use Zend\Router\Http\TreeRouteStack;
 use Zend\Stratigility\Http\Request;
-use Zend\Http\Request as ZendRequest;
 
-class OptionExtractorTest extends PHPUnit_Framework_TestCase
+class OptionExtractorTest extends TestCase
 {
     private $config;
     private $configValidation;
@@ -72,7 +70,7 @@ class OptionExtractorTest extends PHPUnit_Framework_TestCase
                             [
                                 "method_not_allowed" => "/contacts[/:id]"
                             ],
-                        "spec" => ""
+                            "spec" => ""
                     ]
                 ]
             ],
