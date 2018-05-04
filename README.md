@@ -11,7 +11,8 @@ Allows the following:
 
 - Defining named input filters.
 - Mapping named input filters to routes.
-- Returning an `ApiProblemResponse` with validation error messages on invalid input.
+- Returning a PSR-7 response representation of application/problem with validation error messages on invalid input using 
+[Zend Problem Details](https://github.com/zendframework/zend-problem-details)
 
 Installation
 ------------
@@ -84,35 +85,6 @@ Example:
     ],
 ```
 
-### Provided configuration
-To get things easily working, a ConfigProvider is included, which automatically registers all the dependencies in the 
-service container (including the `Zend\Expressive\FinalHandler` service).
-
-If your are using the Expressive's ConfigManager ([zendframework/zend-config-aggregator](https://github.com/zendframework/zend-config-aggregator)), you can just pass the class name to it like this:
-
-```php
-$aggregator = new ConfigAggregator(
-    [
-        ZE\ContentValidation\ConfigProvider::class,
-        new PhpFileProvider('config/autoload/{{,*.}global,{,*.}local}.php'),
-    ], 
-    $cacheConfig['config_cache_path']
-);
-
-return $aggregator->getMergedConfig();
-
-    
-```
-more [about config manager](https://zendframework.github.io/zend-expressive/features/modular-applications/).
-
-
-In alternative, to use the built-in ConfigProvider, create a config file with this contents:
-
-```php
-<?php
-return (new ZE\ContentValidation\ConfigProvider())->__invoke();
-```
-
 ### Validating
 In the following request, an email value is provided with an invalid format, and the displayName field is omitted 
 entirely:
@@ -138,7 +110,7 @@ Content-Type: application/problem+json
   "detail": "Validation Failed"
   "status": 422,
   "title": "Unprocessable Entity",
-  "type": "http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html",
+  "type": "https://httpstatus.es/422",
   "errors": {
     "email": {
         "emailAddressInvalidFormat": "The input is not a valid email address. Use the basic format local-part@hostname"
