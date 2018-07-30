@@ -68,7 +68,7 @@ class ValidationMiddleware implements ServerMiddlewareInterface
                 ['errors' => $validationResult->getMessages()]
             );
         }
-        
+
         $request = $request->withParsedBody($validationResult->getValues());
 
         return $handler->handle($request);
