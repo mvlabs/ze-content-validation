@@ -69,7 +69,9 @@ class ValidationMiddleware implements ServerMiddlewareInterface
             );
         }
 
-        $request = $request->withParsedBody($validationResult->getValues());
+        if ($validationResult instanceof ValidationResult) {
+            $request = $request->withParsedBody($validationResult->getValues());
+        }
 
         return $handler->handle($request);
     }
