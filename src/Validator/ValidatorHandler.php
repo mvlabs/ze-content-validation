@@ -113,7 +113,7 @@ class ValidatorHandler implements ValidatorInterface
     {
         $inputFilter = $this->inputFilterManager->get($inputFilterService);
 
-        if (! $inputFilter instanceof InputFilter) {
+        if (! $inputFilter instanceof InputFilterInterface) {
             throw new ValidationClassNotExists(
                 sprintf(
                     'Listed input filter "%s" does not exist; cannot validate request',
