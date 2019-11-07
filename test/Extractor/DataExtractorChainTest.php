@@ -13,6 +13,7 @@ namespace ZETest\ContentValidation\Extractor;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use ZE\ContentValidation\Extractor\BodyExtractor;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
@@ -269,17 +270,17 @@ class DataExtractorChainTest extends TestCase
                 'name' => '/tmp/12345678adf',
                 'type' => 'text/plain',
                 'size' => '10',
-                'error' => null
+                'error' => 0
             ]
         ];
 
         $uploadedFile = $this->prophesize(UploadedFile::class);
 
-        $uploadedFile->getStream()->willReturn('');
+        $uploadedFile->getStream()->willReturn($this->prophesize(StreamInterface::class));
         $uploadedFile->getClientFilename()->willReturn('/tmp/12345678adf');
         $uploadedFile->getClientMediaType()->willReturn('text/plain');
         $uploadedFile->getSize()->willReturn('10');
-        $uploadedFile->getError()->willReturn(null);
+        $uploadedFile->getError()->willReturn(0);
 
         $request = ServerRequestFactory::fromGlobals()
             ->withMethod('POST')
