@@ -12,7 +12,7 @@ namespace ZE\ContentValidation\Extractor;
 
 use Psr\Http\Message\RequestInterface;
 use ZE\ContentValidation\Exception\UnexpectedValueException;
-use Zend\Stdlib\ArrayUtils;
+use Laminas\Stdlib\ArrayUtils;
 
 /**
  * Class DataExtractorChain

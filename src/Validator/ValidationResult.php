@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Validator;
 
-use Zend\InputFilter\InputFilterInterface;
+use Laminas\InputFilter\InputFilterInterface;
 
 /**
  * Class ValidationResult

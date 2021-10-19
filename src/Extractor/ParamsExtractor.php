@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace ZE\ContentValidation\Extractor;
 
 use Psr\Http\Message\RequestInterface;
-use Zend\Expressive\Router\RouterInterface;
+use Mezzio\Router\RouterInterface;
 
 /**
  * Class ParamsExtractor

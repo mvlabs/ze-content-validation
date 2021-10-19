@@ -17,14 +17,14 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
-use Zend\Expressive\Router\Route;
-use Zend\Expressive\Router\RouterInterface;
-use Zend\Expressive\Router\ZendRouter;
-use Zend\Http\Request as ZendRequest;
-use Zend\Router\Http\TreeRouteStack;
-use Zend\Stratigility\Http\Request;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouterInterface;
+use Mezzio\Router\LaminasRouter;
+use Laminas\Http\Request as LaminasRequest;
+use Laminas\Router\Http\TreeRouteStack;
+use Laminas\Stratigility\Http\Request;
 
-class OptionExtractorTest extends TestCase
+class OptionsExtractorTest extends TestCase
 {
     private $config;
     private $configValidation;
@@ -41,11 +41,11 @@ class OptionExtractorTest extends TestCase
         $middleware = $this->getMiddleware();
         $route = $this->prophesize(Route::class);
         $route->getName()->willReturn('contacts');
-        $routeMatch = new \Zend\Router\Http\RouteMatch([1], 1);
+        $routeMatch = new \Laminas\Router\Http\RouteMatch([1], 1);
         $routeMatch->setMatchedRouteName('contacts');
-        $this->zendRouter = $this->prophesize(TreeRouteStack::class);
-        $this->zendRouter->match(Argument::type(ZendRequest::class))->willReturn($routeMatch);
-        $this->zendRouter->addRoute('contacts', [
+        $this->laminasRouter = $this->prophesize(TreeRouteStack::class);
+        $this->laminasRouter->match(Argument::type(LaminasRequest::class))->willReturn($routeMatch);
+        $this->laminasRouter->addRoute('contacts', [
             'type' => 'segment',
             'options' => [
                 'route' => '/contacts[/:id]',
@@ -76,7 +76,7 @@ class OptionExtractorTest extends TestCase
             ],
         ])->shouldBeCalled();
 
-        $router = new ZendRouter($this->zendRouter->reveal());
+        $router = new LaminasRouter($this->laminasRouter->reveal());
         $router->addRoute(new Route(
             '/contacts[/:id]',
             $middleware,
@@ -134,7 +134,6 @@ class OptionExtractorTest extends TestCase
         $this->assertEquals(
             $this->configValidation['contacts'],
             $optionExtractor->getOptionsForRequest(
-
                 $this->getRequestProphecy('')->reveal()
             )
         );

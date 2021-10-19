@@ -11,6 +11,13 @@ declare(strict_types=1);
 namespace ZETest\ContentValidation\Extractor;
 
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\Stream;
+use Laminas\Diactoros\UploadedFile;
+use Laminas\Http\Request as LaminasRequest;
+use Laminas\Router\Http\TreeRouteStack;
+use Mezzio\Router\LaminasRouter;
+use Mezzio\Router\Route;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Server\MiddlewareInterface;
@@ -20,12 +27,6 @@ use ZE\ContentValidation\Extractor\DataExtractorInterface;
 use ZE\ContentValidation\Extractor\FileExtractor;
 use ZE\ContentValidation\Extractor\ParamsExtractor;
 use ZE\ContentValidation\Extractor\QueryExtractor;
-use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\UploadedFile;
-use Zend\Expressive\Router\Route;
-use Zend\Expressive\Router\ZendRouter;
-use Zend\Http\Request as ZendRequest;
-use Zend\Router\Http\TreeRouteStack;
 
 class DataExtractorChainTest extends TestCase
 {
@@ -36,7 +37,6 @@ class DataExtractorChainTest extends TestCase
             ->withMethod('POST')
             ->withParsedBody([]);
         $actual = $dataExtractorChain->getDataFromRequest($request);
-
 
         self::assertCount(0, $actual);
     }
@@ -50,7 +50,7 @@ class DataExtractorChainTest extends TestCase
     {
         $extractors = [
             $firstExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
-            $secondExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock()
+            $secondExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
         ];
 
         $dataExtractorChain = new DataExtractorChain($extractors);
@@ -62,15 +62,19 @@ class DataExtractorChainTest extends TestCase
                 'Fizz' => 'Buzz',
             ]);
 
-        $firstExtractor->expects(self::any())->method('extractData')->will(self::returnValue([
-            'Foo' => 'Bar',
-            'Bar' => 'Foo',
-        ]));
+        $firstExtractor->expects(self::any())->method('extractData')->will(
+            self::returnValue([
+                'Foo' => 'Bar',
+                'Bar' => 'Foo',
+            ])
+        );
 
-        $secondExtractor->expects(self::any())->method('extractData')->will(self::returnValue([
-            'Foo' => 'FooBar',
-            'Fizz' => 'Buzz',
-        ]));
+        $secondExtractor->expects(self::any())->method('extractData')->will(
+            self::returnValue([
+                'Foo' => 'FooBar',
+                'Fizz' => 'Buzz',
+            ])
+        );
 
         $actual = $dataExtractorChain->getDataFromRequest($request);
 
@@ -88,7 +92,7 @@ class DataExtractorChainTest extends TestCase
     {
         $extractors = [
             $firstExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
-            $secondExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock()
+            $secondExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
         ];
 
         $dataExtractorChain = new DataExtractorChain($extractors);
@@ -100,17 +104,25 @@ class DataExtractorChainTest extends TestCase
                 'Fizz' => 'Buzz',
             ]);
 
-        $firstExtractor->expects(self::any())->method('extractData')->will(self::returnValue(new \ArrayIterator([
-            'Foo' => [
-                'Fizz' => 'Buzz',
-            ],
-        ])));
+        $firstExtractor->expects(self::any())->method('extractData')->will(
+            self::returnValue(
+                new \ArrayIterator([
+                    'Foo' => [
+                        'Fizz' => 'Buzz',
+                    ],
+                ])
+            )
+        );
 
-        $secondExtractor->expects(self::any())->method('extractData')->will(self::returnValue(new \ArrayIterator([
-            'Foo' => [
-                'Fizz' => 'Bar',
-            ],
-        ])));
+        $secondExtractor->expects(self::any())->method('extractData')->will(
+            self::returnValue(
+                new \ArrayIterator([
+                    'Foo' => [
+                        'Fizz' => 'Bar',
+                    ],
+                ])
+            )
+        );
 
         $actual = $dataExtractorChain->getDataFromRequest($request);
 
@@ -131,7 +143,7 @@ class DataExtractorChainTest extends TestCase
     {
 
         $extractors = [
-            $extractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock()
+            $extractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
         ];
 
         $dataExtractorChain = new DataExtractorChain($extractors);
@@ -154,12 +166,12 @@ class DataExtractorChainTest extends TestCase
         $route = $this->prophesize(Route::class);
         $route->getName()->willReturn('contacts');
 
-        $routeMatch = new \Zend\Router\Http\RouteMatch($routeParams, 1);
+        $routeMatch = new \Laminas\Router\Http\RouteMatch($routeParams, 1);
         $routeMatch->setMatchedRouteName('contacts');
-        $this->zendRouter = $this->prophesize(TreeRouteStack::class);
-        $this->zendRouter->match(Argument::type(ZendRequest::class))->willReturn($routeMatch);
+        $this->LaminasRouter = $this->prophesize(TreeRouteStack::class);
+        $this->LaminasRouter->match(Argument::type(LaminasRequest::class))->willReturn($routeMatch);
         $middleware = $this->getMiddleware();
-        $this->zendRouter->addRoute('contacts', [
+        $this->LaminasRouter->addRoute('contacts', [
             'type' => 'segment',
             'options' => [
                 'route' => '/contacts[/:id]',
@@ -182,26 +194,28 @@ class DataExtractorChainTest extends TestCase
                         "regex" => "",
                         "defaults" =>
                             [
-                                "method_not_allowed" => "/contacts[/:id]"
+                                "method_not_allowed" => "/contacts[/:id]",
                             ],
-                            "spec" => ""
-                    ]
-                ]
+                        "spec" => "",
+                    ],
+                ],
             ],
         ])->shouldBeCalled();
-        $router = new ZendRouter($this->zendRouter->reveal());
-        $router->addRoute(new Route(
-            '/contacts[/:id]',
-            $middleware,
-            [
-                RequestMethod::METHOD_GET,
-                RequestMethod::METHOD_DELETE,
-                RequestMethod::METHOD_PATCH,
-                RequestMethod::METHOD_PUT,
-                RequestMethod::METHOD_POST
-            ],
-            'contacts'
-        ));
+        $router = new LaminasRouter($this->LaminasRouter->reveal());
+        $router->addRoute(
+            new Route(
+                '/contacts[/:id]',
+                $middleware,
+                [
+                    RequestMethod::METHOD_GET,
+                    RequestMethod::METHOD_DELETE,
+                    RequestMethod::METHOD_PATCH,
+                    RequestMethod::METHOD_PUT,
+                    RequestMethod::METHOD_POST,
+                ],
+                'contacts'
+            )
+        );
         $extractor = new ParamsExtractor($router);
 
         $data = [
@@ -228,7 +242,7 @@ class DataExtractorChainTest extends TestCase
             'Fizz' => 'Buzz',
         ];
 
-            $request = ServerRequestFactory::fromGlobals()
+        $request = ServerRequestFactory::fromGlobals()
             ->withMethod('POST')
             ->withParsedBody($data);
 
@@ -269,22 +283,22 @@ class DataExtractorChainTest extends TestCase
                 'name' => '/tmp/12345678adf',
                 'type' => 'text/plain',
                 'size' => '10',
-                'error' => null
-            ]
+                'error' => UPLOAD_ERR_OK,
+            ],
         ];
 
         $uploadedFile = $this->prophesize(UploadedFile::class);
 
-        $uploadedFile->getStream()->willReturn('');
+        $uploadedFile->getStream()->willReturn($this->prophesize(Stream::class));
         $uploadedFile->getClientFilename()->willReturn('/tmp/12345678adf');
         $uploadedFile->getClientMediaType()->willReturn('text/plain');
         $uploadedFile->getSize()->willReturn('10');
-        $uploadedFile->getError()->willReturn(null);
+        $uploadedFile->getError()->willReturn(UPLOAD_ERR_OK);
 
         $request = ServerRequestFactory::fromGlobals()
             ->withMethod('POST')
             ->withUploadedFiles([
-                'filename' => $uploadedFile->reveal()
+                'filename' => $uploadedFile->reveal(),
             ]);
 
         $actual = $extractor->extractData($request);

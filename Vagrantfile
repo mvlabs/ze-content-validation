@@ -10,7 +10,7 @@ Vagrant.configure("2") do |config|
     apt-get update
 
     # Install PHP and git
-    apt-get install -y php7.1-cli php7.1-xml php7.1-mbstring php7.1-zip php7.1-curl php7.1-dom php7.1-json php7.1-xdebug git unzip
+    apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-dom php7.4-json php7.4-xdebug git unzip
 
     cd /usr/src
     sudo apt-get install -y curl

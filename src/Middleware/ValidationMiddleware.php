@@ -17,7 +17,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use ZE\ContentValidation\Exception\ValidationException;
 use ZE\ContentValidation\Validator\ValidationResult;
 use ZE\ContentValidation\Validator\ValidatorHandler;
-use Zend\ProblemDetails\ProblemDetailsResponseFactory;
+use Laminas\ProblemDetails\ProblemDetailsResponseFactory;
 
 /**
  * Class ValidationMiddleware

@@ -14,9 +14,9 @@ use Psr\Http\Message\ServerRequestInterface;
 use ZE\ContentValidation\Exception\ValidationClassNotExists;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
-use Zend\InputFilter\InputFilter;
-use Zend\InputFilter\InputFilterInterface;
-use Zend\ServiceManager\ServiceLocatorInterface;
+use Laminas\InputFilter\InputFilter;
+use Laminas\InputFilter\InputFilterInterface;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class ValidatorHandler

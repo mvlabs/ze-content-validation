@@ -12,7 +12,7 @@ namespace ZE\ContentValidation\Middleware;
 
 use Interop\Container\ContainerInterface;
 use ZE\ContentValidation\Validator\ValidatorHandler;
-use Zend\ProblemDetails\ProblemDetailsResponseFactory;
+use Laminas\ProblemDetails\ProblemDetailsResponseFactory;
 
 /**
  * Class ValidationMiddlewareFactory

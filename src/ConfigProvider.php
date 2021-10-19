@@ -10,6 +10,7 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation;
 
+use Mezzio\Container\ErrorResponseGeneratorFactory;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
 use ZE\ContentValidation\Extractor\DataExtractorChainFactory;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
@@ -20,9 +21,7 @@ use ZE\ContentValidation\Middleware\ValidationMiddleware;
 use ZE\ContentValidation\Middleware\ValidationMiddlewareFactory;
 use ZE\ContentValidation\Validator\ValidatorHandler;
 use ZE\ContentValidation\Validator\ValidatorHandlerFactory;
-use Zend\Expressive\Container\ErrorResponseGeneratorFactory;
-use Zend\Expressive\FinalHandler;
-use Zend\InputFilter\InputFilterPluginManager;
+use Laminas\InputFilter\InputFilterPluginManager;
 use zf2timo\Bridge\Factory\InputFilterManagerFactory;
 
 /**
@@ -62,7 +61,7 @@ class ConfigProvider
             ],
             'aliases' => [
                 'InputFilterManager' => InputFilterPluginManager::class,
-            ]
+            ],
         ];
     }
 
@@ -75,8 +74,8 @@ class ConfigProvider
     {
         return [
             'abstract_factories' => [
-                \Zend\InputFilter\InputFilterAbstractServiceFactory::class,
-            ]
+                \Laminas\InputFilter\InputFilterAbstractServiceFactory::class,
+            ],
         ];
     }
 }
