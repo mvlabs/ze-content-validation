@@ -58,7 +58,7 @@ final class ValidationResult implements ValidationResultInterface
     {
         $messages = [];
 
-        if (!$inputFilter->isValid()) {
+        if (! $inputFilter->isValid()) {
             foreach ($inputFilter->getInvalidInput() as $message) {
                 $messages[$message->getName()] = $message->getMessages();
             }

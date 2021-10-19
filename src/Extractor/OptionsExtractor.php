@@ -39,7 +39,7 @@ class OptionsExtractor
     {
         $matchedRoute = $this->router->match($request)->getMatchedRoute();
 
-        if (!$matchedRoute instanceof Route) {
+        if (! $matchedRoute instanceof Route) {
             return [];
         }
 

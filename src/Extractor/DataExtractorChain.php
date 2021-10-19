@@ -44,7 +44,7 @@ class DataExtractorChain
                     $data = iterator_to_array($data);
                 }
 
-                if (!is_array($data)) {
+                if (! is_array($data)) {
                     throw new UnexpectedValueException(
                         sprintf(
                             'Data Extractor `%s` returned a `%s` instead of an `array`',
