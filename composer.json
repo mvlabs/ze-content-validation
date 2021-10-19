@@ -38,7 +38,12 @@
         "phpunit/phpunit": "^7.0.1",
         "roave/security-advisories": "dev-master",
         "laminas/laminas-coding-standard": "^2.0",
-        "mezzio/mezzio-laminasrouter": "^3.0"
+        "mezzio/mezzio-laminasrouter": "^3.0",
+        "phpstan/phpstan": "^0.12.99",
+        "phpstan/phpstan-strict-rules": "^0.12.11",
+        "phpstan/phpstan-phpunit": "^0.12.22",
+        "jangregor/phpstan-prophecy": "^0.8.1",
+        "phpstan/phpstan-deprecation-rules": "^0.12.6"
     },
     "autoload": {
         "psr-4": {
@@ -51,6 +56,7 @@
         }
     },
     "scripts": {
+        "analyse": "phpstan analyse --no-interaction",
         "check": [
             "@cs-check",
             "@test"

@@ -36,7 +36,11 @@ class ValidationMiddleware implements ServerMiddlewareInterface
     {
         $validationResult = $this->validator->validate($request);
 
-        if ($validationResult instanceof ValidationResult && !$validationResult->isValid()) {
+        if (is_bool($validationResult)) {
+            return $handler->handle($request);
+        }
+
+        if (!$validationResult->isValid()) {
             return $this->problemDetailsFactory->createResponse(
                 $request,
                 422,

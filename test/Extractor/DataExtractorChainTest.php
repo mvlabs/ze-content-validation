@@ -31,7 +31,7 @@ use ZE\ContentValidation\Extractor\QueryExtractor;
 
 class DataExtractorChainTest extends TestCase
 {
-    public function testGetDataFromRequestFromEmptyChain()
+    public function testGetDataFromRequestFromEmptyChain(): void
     {
         $dataExtractorChain = new DataExtractorChain([]);
         $request = ServerRequestFactory::fromGlobals()
@@ -47,7 +47,7 @@ class DataExtractorChainTest extends TestCase
         return $this->prophesize(MiddlewareInterface::class)->reveal();
     }
 
-    public function testGetDataFromRequestDefaultExtraction()
+    public function testGetDataFromRequestDefaultExtraction(): void
     {
         $extractors = [
             $firstExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
@@ -79,7 +79,7 @@ class DataExtractorChainTest extends TestCase
 
         $actual = $dataExtractorChain->getDataFromRequest($request);
 
-        self::assertArraySubset(
+        self::assertSame(
             [
                 'Foo' => 'FooBar',
                 'Bar' => 'Foo',
@@ -89,7 +89,7 @@ class DataExtractorChainTest extends TestCase
         );
     }
 
-    public function testGetDataFromRequesExtractTraversable()
+    public function testGetDataFromRequesExtractTraversable(): void
     {
         $extractors = [
             $firstExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
@@ -127,7 +127,7 @@ class DataExtractorChainTest extends TestCase
 
         $actual = $dataExtractorChain->getDataFromRequest($request);
 
-        self::assertArraySubset(
+        self::assertSame(
             [
                 'Foo' => [
                     'Fizz' => 'Bar',
@@ -140,7 +140,7 @@ class DataExtractorChainTest extends TestCase
     /**
      * //@expectedException ZE\ContentValidation\Exception\UnexpectedValueException
      */
-    public function testGetDataFromRequestInvalidExtraction()
+    public function testGetDataFromRequestInvalidExtraction(): void
     {
 
         $extractors = [
@@ -161,7 +161,7 @@ class DataExtractorChainTest extends TestCase
         $dataExtractorChain->getDataFromRequest($request);
     }
 
-    public function testParamsExtractorExtractDataFromRequestOnPostAndIsOk()
+    public function testParamsExtractorExtractDataFromRequestOnPostAndIsOk(): void
     {
         $routeParams = ['id' => 1];
         $route = $this->prophesize(Route::class);
@@ -169,10 +169,10 @@ class DataExtractorChainTest extends TestCase
 
         $routeMatch = new \Laminas\Router\Http\RouteMatch($routeParams, 1);
         $routeMatch->setMatchedRouteName('contacts');
-        $this->LaminasRouter = $this->prophesize(TreeRouteStack::class);
-        $this->LaminasRouter->match(Argument::type(LaminasRequest::class))->willReturn($routeMatch);
+        $laminasRouter = $this->prophesize(TreeRouteStack::class);
+        $laminasRouter->match(Argument::type(LaminasRequest::class))->willReturn($routeMatch);
         $middleware = $this->getMiddleware();
-        $this->LaminasRouter->addRoute('contacts', [
+        $laminasRouter->addRoute('contacts', [
             'type' => 'segment',
             'options' => [
                 'route' => '/contacts[/:id]',
@@ -202,7 +202,7 @@ class DataExtractorChainTest extends TestCase
                 ],
             ],
         ])->shouldBeCalled();
-        $router = new LaminasRouter($this->LaminasRouter->reveal());
+        $router = new LaminasRouter($laminasRouter->reveal());
         $router->addRoute(
             new Route(
                 '/contacts[/:id]',
@@ -229,13 +229,13 @@ class DataExtractorChainTest extends TestCase
 
         $actual = $extractor->extractData($request);
 
-        self::assertArraySubset(
+        self::assertSame(
             $routeParams,
             $actual
         );
     }
 
-    public function testBodyExtractorExtractDataFromRequestOnPostAndIsOk()
+    public function testBodyExtractorExtractDataFromRequestOnPostAndIsOk(): void
     {
         $extractor = new BodyExtractor();
         $data = [
@@ -249,13 +249,13 @@ class DataExtractorChainTest extends TestCase
 
         $actual = $extractor->extractData($request);
 
-        self::assertArraySubset(
+        self::assertSame(
             $data,
             $actual
         );
     }
 
-    public function testQueryExtractorExtractDataFromRequestOnGetAndIsOk()
+    public function testQueryExtractorExtractDataFromRequestOnGetAndIsOk(): void
     {
         $extractor = new QueryExtractor();
         $data = [
@@ -269,31 +269,31 @@ class DataExtractorChainTest extends TestCase
 
         $actual = $extractor->extractData($request);
 
-        self::assertArraySubset(
+        self::assertSame(
             $data,
             $actual
         );
     }
 
-    public function testFileExtractorExtractDataFromRequestOnPostAndIsOk()
+    public function testFileExtractorExtractDataFromRequestOnPostAndIsOk(): void
     {
         $extractor = new FileExtractor();
         $data = [
             'filename' => [
-                'tmp_name' => '',
+                'tmp_name' => null,
                 'name' => '/tmp/12345678adf',
                 'type' => 'text/plain',
-                'size' => '10',
+                'size' => 10,
                 'error' => UPLOAD_ERR_OK,
             ],
         ];
 
         $uploadedFile = $this->prophesize(UploadedFile::class);
 
-        $uploadedFile->getStream()->willReturn($this->prophesize(Stream::class));
+        $uploadedFile->getStream()->willReturn($this->prophesize(Stream::class)->reveal());
         $uploadedFile->getClientFilename()->willReturn('/tmp/12345678adf');
         $uploadedFile->getClientMediaType()->willReturn('text/plain');
-        $uploadedFile->getSize()->willReturn('10');
+        $uploadedFile->getSize()->willReturn(10);
         $uploadedFile->getError()->willReturn(UPLOAD_ERR_OK);
 
         $request = ServerRequestFactory::fromGlobals()
@@ -304,7 +304,7 @@ class DataExtractorChainTest extends TestCase
 
         $actual = $extractor->extractData($request);
 
-        self::assertArraySubset(
+        self::assertSame(
             $data,
             $actual
         );

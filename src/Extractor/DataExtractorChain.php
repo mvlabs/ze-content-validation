@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace ZE\ContentValidation\Extractor;
 
 use Laminas\Stdlib\ArrayUtils;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use ZE\ContentValidation\Exception\UnexpectedValueException;
 
 class DataExtractorChain
@@ -33,11 +33,11 @@ class DataExtractorChain
     /**
      * @return mixed[]
      */
-    public function getDataFromRequest(RequestInterface $request)
+    public function getDataFromRequest(ServerRequestInterface $request)
     {
         $result = [];
         $dataSets = array_map(
-            function (DataExtractorInterface $extractor) use ($request) {
+            function (DataExtractorInterface $extractor) use ($request): array {
                 $data = $extractor->extractData($request);
 
                 if ($data instanceof \Traversable) {

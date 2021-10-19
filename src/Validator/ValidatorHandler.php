@@ -58,7 +58,7 @@ class ValidatorHandler implements ValidatorInterface
     {
         $routeValidationConfig = $this->optionsExtractor->getOptionsForRequest($request);
 
-        if (isset($routeValidationConfig)) {
+        if (count($routeValidationConfig) !== 0) {
             $method = strtolower($request->getMethod());
             $validation = array_change_key_case($routeValidationConfig, CASE_LOWER);
 

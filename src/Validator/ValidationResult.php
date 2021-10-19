@@ -38,16 +38,15 @@ final class ValidationResult implements ValidationResultInterface
     /**
      * ValidationResult constructor.
      *
-     * @param array $rawValues
-     * @param array $values
-     * @param array $messages
-     * @param null|string $method
+     * @param mixed[] $rawValues
+     * @param mixed[] $values
+     * @param array<string, string[]> $messages
      */
     public function __construct(
         array $rawValues,
         array $values,
         array $messages,
-        $method = null
+        ?string $method
     ) {
         $this->rawValues = $rawValues;
         $this->values = $values;
@@ -55,7 +54,7 @@ final class ValidationResult implements ValidationResultInterface
         $this->method = $method;
     }
 
-    public static function buildFromInputFilter(InputFilterInterface $inputFilter, $method)
+    public static function buildFromInputFilter(InputFilterInterface $inputFilter, string $method): self
     {
         $messages = [];
 
@@ -74,34 +73,22 @@ final class ValidationResult implements ValidationResultInterface
         );
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function isValid()
+    public function isValid(): bool
     {
         return (count($this->messages) === 0);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getMessages()
+    public function getMessages(): array
     {
         return $this->messages;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getRawValues()
+    public function getRawValues(): array
     {
         return $this->rawValues;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getValues()
+    public function getValues(): array
     {
         return $this->values;
     }

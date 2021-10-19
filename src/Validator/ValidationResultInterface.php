@@ -22,16 +22,22 @@ interface ValidationResultInterface
 
     /**
      * Get validation messages
+     *
+     * @return array<string, string[]>
      */
     public function getMessages(): array;
 
     /**
      * Get the raw input values
+     *
+     * @return mixed[]
      */
     public function getRawValues(): array;
 
     /**
      * Get the filtered input values
+     *
+     * @return mixed[]
      */
     public function getValues(): array;
 }

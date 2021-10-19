@@ -24,7 +24,7 @@ class FileExtractor implements DataExtractorInterface
         $files = [];
         $uploadedFiles = $request->getUploadedFiles();
 
-        if (!empty($uploadedFiles)) {
+        if (count($uploadedFiles) !== 0) {
             foreach ($uploadedFiles as $key => $uploadedFile) {
                 $files[$key] = $this->uploadedFileToArray($uploadedFile);
             }
@@ -38,11 +38,11 @@ class FileExtractor implements DataExtractorInterface
      */
     private function uploadedFileToArray(UploadedFileInterface $uploadedFile): array
     {
-        if (!$uploadedFile->getError()) {
+        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
             $stream = $uploadedFile->getStream();
 
             return [
-                'tmp_name' => ($stream) ? $stream->getMetadata('uri') : '',
+                'tmp_name' => $stream->getMetadata('uri'),
                 'name' => $uploadedFile->getClientFilename(),
                 'type' => $uploadedFile->getClientMediaType(),
                 'size' => $uploadedFile->getSize(),

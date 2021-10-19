@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Extractor;
 
+use Mezzio\Router\Route;
 use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -32,14 +33,19 @@ class OptionsExtractor
     }
 
     /**
-     * @return array
+     * @return mixed[]
      */
     public function getOptionsForRequest(ServerRequestInterface $request): array
     {
         $matchedRoute = $this->router->match($request)->getMatchedRoute();
+
+        if (!$matchedRoute instanceof Route) {
+            return [];
+        }
+
         foreach ($this->config as $routeName => $options) {
             if ($routeName === $matchedRoute->getName()) {
-                return isset($options) ? $options : [];
+                return $options;
             }
         }
 
