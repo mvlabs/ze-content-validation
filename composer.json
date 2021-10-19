@@ -1,21 +1,23 @@
 {
-    "name": "mvlabs/ze-content-validation",
+    "name": "func0der/ze-content-validation",
     "type": "library",
-    "description": "PSR-7 Validation middleware for Zend Expressive",
+    "description": "PSR-7 Validation middleware for Laminas Mezzio",
     "authors": [
         {
             "name": "Diego Drigani",
             "email": "d.drigani@mvlabs.it",
             "homepage": "http://www.mvlabs.it"
+        },
+        {
+            "name": "func0der",
+            "homepage": "https://www.func0der.de/"
         }
     ],
     "license": "MIT",
-    "repositories": [
-    ],
     "keywords": [
         "http",
-        "zend",
-        "expressive",
+        "laminas",
+        "mezzio",
         "validation",
         "psr",
         "psr-7"

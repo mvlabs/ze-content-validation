@@ -5,3 +5,4 @@
 ### Added
 
   * Vagrantfile for easy local testing
+  * Licensing information
