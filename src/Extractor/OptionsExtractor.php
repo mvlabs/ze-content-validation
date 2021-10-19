@@ -11,34 +11,19 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Extractor;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Mezzio\Router\RouteResult;
 use Mezzio\Router\RouterInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Class OptionsExtractor
- *
- * @package ZE\ContentValidation\Extractor
- * @author  Diego Drigani <d.drigani@mvlabs.it>
- */
 class OptionsExtractor
 {
     /**
-     * @var array
+     * @var array<string, array<string, string>>
      */
-    private $config;
+    private array $config;
+    private RouterInterface $router;
 
     /**
-     * @var RouterInterface $route
-     */
-    private $router;
-
-    /**
-     * OptionsExtractor constructor.
-     *
-     * @param array           $config
-     * @param RouterInterface $router
+     * @param array<string, array<string, string>> $config
      */
     public function __construct(array $config, RouterInterface $router)
     {
@@ -47,14 +32,10 @@ class OptionsExtractor
     }
 
     /**
-     * @param Request $request
      * @return array
      */
-    public function getOptionsForRequest(ServerRequestInterface $request)
+    public function getOptionsForRequest(ServerRequestInterface $request): array
     {
-        /**
-         * @var RouteResult $routeMatch
-         */
         $matchedRoute = $this->router->match($request)->getMatchedRoute();
         foreach ($this->config as $routeName => $options) {
             if ($routeName === $matchedRoute->getName()) {
@@ -63,13 +44,5 @@ class OptionsExtractor
         }
 
         return [];
-    }
-
-    /**
-     * @return array
-     */
-    private function getAll()
-    {
-        return $this->config;
     }
 }

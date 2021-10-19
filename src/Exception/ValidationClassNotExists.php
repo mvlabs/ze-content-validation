@@ -10,11 +10,6 @@ namespace ZE\ContentValidation\Exception;
 
 use Exception;
 
-/**
- * ValidationClassNotExists
- *
- * @author Diego Drigani <d.drigani@mvlabs.it>
- */
 class ValidationClassNotExists extends Exception
 {
 }

@@ -13,40 +13,34 @@ namespace ZE\ContentValidation\Validator;
 
 use Laminas\InputFilter\InputFilterInterface;
 
-/**
- * Class ValidationResult
- *
- * @package ZE\ContentValidation\Validator
- * @author  Diego Drigani<d.drigani@mvlabs.it>
- */
 final class ValidationResult implements ValidationResultInterface
 {
     /**
-     * @var array
+     * @var mixed[]
      */
-    private $rawValues;
+    private array $rawValues;
 
     /**
-     * @var array
+     * @var mixed[]
      */
-    private $values;
+    private array $values;
 
     /**
-     * @var array
+     * @var array<string, string[]>
      */
-    private $messages;
+    private array $messages;
 
     /**
      * @var null|string
      */
-    private $method;
+    private ?string $method;
 
     /**
      * ValidationResult constructor.
      *
-     * @param array       $rawValues
-     * @param array       $values
-     * @param array       $messages
+     * @param array $rawValues
+     * @param array $values
+     * @param array $messages
      * @param null|string $method
      */
     public function __construct(
@@ -65,11 +59,12 @@ final class ValidationResult implements ValidationResultInterface
     {
         $messages = [];
 
-        if (! $inputFilter->isValid()) {
+        if (!$inputFilter->isValid()) {
             foreach ($inputFilter->getInvalidInput() as $message) {
                 $messages[$message->getName()] = $message->getMessages();
             }
         }
+
         // Return validation result
         return new self(
             $inputFilter->getRawValues(),

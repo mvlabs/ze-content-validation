@@ -13,16 +13,9 @@ namespace ZE\ContentValidation\Validator;
 
 use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Interface ValidatorInterface
- *
- * @package ZE\ContentValidation\Validator
- * @author  Diego Drigani <d.drigani@mvlabs.it>
- */
 interface ValidatorInterface
 {
     /**
-     * @param ServerRequestInterface $request
      * @return bool|ValidationResult
      */
     public function validate(ServerRequestInterface $request);

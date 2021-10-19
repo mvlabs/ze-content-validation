@@ -11,41 +11,27 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Validator;
 
-/**
- * Interface ValidationResultInterface
- *
- * @package ZE\ContentValidation\Validator
- * @author  Diego Drigani<d.drigani@mvlabs.it>
- */
 interface ValidationResultInterface
 {
     /**
      * Check if the validation was successful
      *
      * If there are no validation messages set, the validation result object is considered valid.
-     *
-     * @return bool
      */
-    public function isValid();
+    public function isValid(): bool;
 
     /**
      * Get validation messages
-     *
-     * @return array
      */
-    public function getMessages();
+    public function getMessages(): array;
 
     /**
      * Get the raw input values
-     *
-     * @return array
      */
-    public function getRawValues();
+    public function getRawValues(): array;
 
     /**
      * Get the filtered input values
-     *
-     * @return array
      */
-    public function getValues();
+    public function getValues(): array;
 }

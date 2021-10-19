@@ -12,27 +12,18 @@ declare(strict_types=1);
 namespace ZE\ContentValidation\Validator;
 
 use Interop\Container\ContainerInterface;
+use Laminas\InputFilter\InputFilterPluginManager;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
 
-/**
- * Class ValidatorHandlerFactory
- *
- * @package ZE\ContentValidation\Validator
- * @author  Diego Drigani <d.drigani@mvlabs.it>
- */
 class ValidatorHandlerFactory
 {
-    /**
-     * @param ContainerInterface $container
-     * @return ValidatorHandler
-     */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): ValidatorHandler
     {
         return new ValidatorHandler(
             $container->get(OptionsExtractor::class),
             $container->get(DataExtractorChain::class),
-            $container->get('InputFilterManager')
+            $container->get(InputFilterPluginManager::class)
         );
     }
 }

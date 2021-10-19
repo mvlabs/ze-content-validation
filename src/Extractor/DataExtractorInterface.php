@@ -11,21 +11,12 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Extractor;
 
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Interface DataExtractorInterface
- *
- * @package ZE\ContentValidation\Extractor
- * @author  Diego Drigani <d.drigani@mvlabs.it>
- */
 interface DataExtractorInterface
 {
     /**
-     * extractData
-     *
-     * @param  RequestInterface $request
      * @return mixed
      */
-    public function extractData(RequestInterface $request);
+    public function extractData(ServerRequestInterface $request);
 }

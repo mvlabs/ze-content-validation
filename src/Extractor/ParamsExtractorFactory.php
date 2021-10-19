@@ -14,19 +14,9 @@ namespace ZE\ContentValidation\Extractor;
 use Interop\Container\ContainerInterface;
 use Mezzio\Router\RouterInterface;
 
-/**
- * Class ParamsExtractorFactory
- *
- * @package ZE\ContentValidation\Extractor
- * @author  Diego Drigani <d.drigani@mvlabs.it>
- */
 class ParamsExtractorFactory
 {
-    /**
-     * @param ContainerInterface $container
-     * @return DataExtractorChain
-     */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): ParamsExtractor
     {
         return new ParamsExtractor($container->get(RouterInterface::class));
     }

@@ -11,21 +11,14 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Extractor;
 
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Class BodyExtractor
- *
- * @package ZE\ContentValidation\Extractor
- * @author  Diego Drigani <d.drigani@mvlabs.it>
- */
 class BodyExtractor implements DataExtractorInterface
 {
     /**
-     * @param RequestInterface $request
      * @return mixed
      */
-    public function extractData(RequestInterface $request)
+    public function extractData(ServerRequestInterface $request)
     {
         return $request->getParsedBody();
     }

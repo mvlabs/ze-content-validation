@@ -11,28 +11,19 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Extractor;
 
+use Laminas\Stdlib\ArrayUtils;
 use Psr\Http\Message\RequestInterface;
 use ZE\ContentValidation\Exception\UnexpectedValueException;
-use Laminas\Stdlib\ArrayUtils;
 
-/**
- * Class DataExtractorChain
- *
- * @package ZE\ContentValidation\Extractor
- * @author  Diego Drigani <d.drigani@mvlabs.it>
- */
 class DataExtractorChain
 {
-
     /**
-     * @var array DataExtractorInterfacece
+     * @var DataExtractorInterface[]
      */
     protected $extractors = [];
 
     /**
-     * ExtractorChain constructor.
-     *
-     * @param array $extractors
+     * @param DataExtractorInterface[] $extractors
      */
     public function __construct(array $extractors)
     {
@@ -40,8 +31,7 @@ class DataExtractorChain
     }
 
     /**
-     * @param RequestInterface $request
-     * @return array
+     * @return mixed[]
      */
     public function getDataFromRequest(RequestInterface $request)
     {
@@ -54,7 +44,7 @@ class DataExtractorChain
                     $data = iterator_to_array($data);
                 }
 
-                if (! is_array($data)) {
+                if (!is_array($data)) {
                     throw new UnexpectedValueException(
                         sprintf(
                             'Data Extractor `%s` returned a `%s` instead of an `array`',
@@ -63,6 +53,7 @@ class DataExtractorChain
                         )
                     );
                 }
+
                 return $data;
             },
             $this->extractors

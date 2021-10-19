@@ -12,22 +12,12 @@ declare(strict_types=1);
 namespace ZE\ContentValidation\Middleware;
 
 use Interop\Container\ContainerInterface;
+use Mezzio\ProblemDetails\ProblemDetailsResponseFactory;
 use ZE\ContentValidation\Validator\ValidatorHandler;
-use Laminas\ProblemDetails\ProblemDetailsResponseFactory;
 
-/**
- * Class ValidationMiddlewareFactory
- *
- * @package ZE\ContentValidation\Middleware
- * @author  Diego Drigani<d.drigani@mvlabs.it>
- */
 class ValidationMiddlewareFactory
 {
-    /**
-     * @param ContainerInterface $container
-     * @return ValidationMiddleware
-     */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): ValidationMiddleware
     {
         return new ValidationMiddleware(
             $container->get(ValidatorHandler::class),

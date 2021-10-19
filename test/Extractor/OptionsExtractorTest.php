@@ -1,8 +1,9 @@
 <?php
 /**
- * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ * ze-content-validation (https://github.com/func0der/ze-content-validation)
  *
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @copyright Copyright (c) 2021 func0der
  * @license   MIT
  */
 
@@ -11,18 +12,17 @@ declare(strict_types=1);
 namespace ZETest\ContentValidation\Extractor;
 
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
+use Laminas\Http\Request as LaminasRequest;
+use Laminas\Router\Http\TreeRouteStack;
+use Mezzio\Router\LaminasRouter;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouterInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
-use Mezzio\Router\Route;
-use Mezzio\Router\RouterInterface;
-use Mezzio\Router\LaminasRouter;
-use Laminas\Http\Request as LaminasRequest;
-use Laminas\Router\Http\TreeRouteStack;
-use Laminas\Stratigility\Http\Request;
 
 class OptionsExtractorTest extends TestCase
 {
@@ -68,27 +68,29 @@ class OptionsExtractorTest extends TestCase
                         "regex" => "",
                         "defaults" =>
                             [
-                                "method_not_allowed" => "/contacts[/:id]"
+                                "method_not_allowed" => "/contacts[/:id]",
                             ],
-                            "spec" => ""
-                    ]
-                ]
+                        "spec" => "",
+                    ],
+                ],
             ],
         ])->shouldBeCalled();
 
         $router = new LaminasRouter($this->laminasRouter->reveal());
-        $router->addRoute(new Route(
-            '/contacts[/:id]',
-            $middleware,
-            [
-                RequestMethod::METHOD_GET,
-                RequestMethod::METHOD_DELETE,
-                RequestMethod::METHOD_PATCH,
-                RequestMethod::METHOD_PUT,
-                RequestMethod::METHOD_POST
-            ],
-            'contacts'
-        ));
+        $router->addRoute(
+            new Route(
+                '/contacts[/:id]',
+                $middleware,
+                [
+                    RequestMethod::METHOD_GET,
+                    RequestMethod::METHOD_DELETE,
+                    RequestMethod::METHOD_PATCH,
+                    RequestMethod::METHOD_PUT,
+                    RequestMethod::METHOD_POST,
+                ],
+                'contacts'
+            )
+        );
 
         $this->router = $router;
     }
@@ -111,7 +113,6 @@ class OptionsExtractorTest extends TestCase
             )
         );
     }
-
 
     public function testOptionsExistWithRouteMatchReturnsARightValidatorConfig()
     {
@@ -144,7 +145,7 @@ class OptionsExtractorTest extends TestCase
         $request = $this->prophesize(ServerRequestInterface::class);
         $uri = $this->prophesize(UriInterface::class);
         $uri->getPath()->willReturn($uriString);
-        $uri->__toString()->willReturn('http://www.example.com/'.$uriString);
+        $uri->__toString()->willReturn('http://www.example.com/' . $uriString);
         $request->getMethod()->willReturn($requestMethod);
         $request->getUri()->will([$uri, 'reveal']);
         $request->getHeaders()->willReturn([]);
@@ -161,8 +162,9 @@ class OptionsExtractorTest extends TestCase
     private function applyValidationConfig()
     {
         $this->configValidation = [
-            'contacts' => [ //route name
-                '*' => ContactInputFilter::class
+            // route name
+            'contacts' => [
+                '*' => ContactInputFilter::class,
             ],
         ];
     }

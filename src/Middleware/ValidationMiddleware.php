@@ -11,38 +11,19 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Middleware;
 
+use Mezzio\ProblemDetails\ProblemDetailsResponseFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface as ServerMiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use ZE\ContentValidation\Exception\ValidationException;
 use ZE\ContentValidation\Validator\ValidationResult;
 use ZE\ContentValidation\Validator\ValidatorHandler;
-use Laminas\ProblemDetails\ProblemDetailsResponseFactory;
 
-/**
- * Class ValidationMiddleware
- *
- * @package ZE\ContentValidation\Middleware
- * @author  Diego Drigani<d.drigani@mvlabs.it>
- */
 class ValidationMiddleware implements ServerMiddlewareInterface
 {
-    /**
-     * @var ProblemDetailsResponseFactory
-     */
-    private $problemDetailsFactory;
-    /**
-     * @var ValidatorHandler
-     */
-    private $validator;
+    private ProblemDetailsResponseFactory $problemDetailsFactory;
+    private ValidatorHandler $validator;
 
-    /**
-     * ValidationMiddleware constructor.
-     *
-     * @param ValidatorHandler $validator
-     * @param ProblemDetailsResponseFactory $problemDetailsFactory
-     */
     public function __construct(
         ValidatorHandler $validator,
         ProblemDetailsResponseFactory $problemDetailsFactory
@@ -51,15 +32,11 @@ class ValidationMiddleware implements ServerMiddlewareInterface
         $this->problemDetailsFactory = $problemDetailsFactory;
     }
 
-
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /**
-         * @var ValidationResult $validationResult
-         */
         $validationResult = $this->validator->validate($request);
 
-        if ($validationResult instanceof ValidationResult && ! $validationResult->isValid()) {
+        if ($validationResult instanceof ValidationResult && !$validationResult->isValid()) {
             return $this->problemDetailsFactory->createResponse(
                 $request,
                 422,
