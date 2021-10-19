@@ -15,22 +15,22 @@ matrix:
   include:
     - php: 7.4
       env:
-        - DEPS=lowest
+        - CS_CHECK=true
+        - ANALYSE=true
     - php: 7.4
       env:
-        - DEPS=latest
-        - CS_CHECK=true
+        - DEPS=lowest
 
 before_install:
   - if [[ $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
   - travis_retry composer self-update
 
 install:
-  - if [[ $DEPS == 'latest' ]]; then travis_retry composer update $COMPOSER_ARGS ; fi
-  - if [[ $DEPS == 'lowest' ]]; then travis_retry composer update --prefer-lowest --prefer-stable $COMPOSER_ARGS ; fi
   - travis_retry composer install $COMPOSER_ARGS
+  - if [[ $DEPS == 'lowest' ]]; then travis_retry composer update --prefer-lowest --prefer-stable $COMPOSER_ARGS ; fi
   - composer show
 
 script:
   - composer test
   - if [[ $CS_CHECK == 'true' ]]; then composer cs-check ; fi
+  - if [[ $ANALYSE == 'true' ]]; then composer analyse ; fi
