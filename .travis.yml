@@ -20,14 +20,6 @@ matrix:
     - php: 7.4
       env:
         - DEPS=lowest
-    - php: 8.0
-    - php: 8.0
-      env:
-        - DEPS=lowest
-    - php: 8.1
-    - php: 8.1
-      env:
-        - DEPS=lowest
 
 before_install:
   - if [[ $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini || return 0 ; fi
