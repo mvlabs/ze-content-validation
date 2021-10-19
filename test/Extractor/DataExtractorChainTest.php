@@ -21,6 +21,7 @@ use Mezzio\Router\LaminasRouter;
 use Mezzio\Router\Route;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Server\MiddlewareInterface;
 use ZE\ContentValidation\Extractor\BodyExtractor;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
@@ -31,6 +32,8 @@ use ZE\ContentValidation\Extractor\QueryExtractor;
 
 class DataExtractorChainTest extends TestCase
 {
+    use ProphecyTrait;
+
     public function testGetDataFromRequestFromEmptyChain(): void
     {
         $dataExtractorChain = new DataExtractorChain([]);

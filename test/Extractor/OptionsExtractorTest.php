@@ -20,6 +20,7 @@ use Mezzio\Router\Route;
 use Mezzio\Router\RouterInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
@@ -28,6 +29,8 @@ use ZE\ContentValidation\Extractor\OptionsExtractor;
 
 class OptionsExtractorTest extends TestCase
 {
+    use ProphecyTrait;
+
     /**
      * @var array<string, array<string, class-string>>
      */
@@ -144,8 +147,10 @@ class OptionsExtractorTest extends TestCase
     /**
      * @return ObjectProphecy<ServerRequestInterface>
      */
-    public function getRequestProphecy(string $uriString, string $requestMethod = RequestMethod::METHOD_GET): ObjectProphecy
-    {
+    public function getRequestProphecy(
+        string $uriString,
+        string $requestMethod = RequestMethod::METHOD_GET
+    ): ObjectProphecy {
         $request = $this->prophesize(ServerRequestInterface::class);
         $uri = $this->prophesize(UriInterface::class);
         $uri->getPath()->willReturn($uriString);
