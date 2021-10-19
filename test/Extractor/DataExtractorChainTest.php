@@ -149,6 +149,7 @@ class DataExtractorChainTest extends TestCase
         $extractors = [
             $extractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
         ];
+        $extractor->expects(self::once())->method('extractData')->willReturn([]);
 
         $dataExtractorChain = new DataExtractorChain($extractors);
 
