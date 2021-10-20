@@ -1,8 +1,9 @@
 <?php
 /**
- * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ * ze-content-validation (https://github.com/func0der/ze-content-validation)
  *
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @copyright Copyright (c) 2021 func0der
  * @license   MIT
  */
 
@@ -10,40 +11,25 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Extractor;
 
-use Psr\Http\Message\RequestInterface;
-use Zend\Expressive\Router\RouterInterface;
+use Mezzio\Router\RouterInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-/**
- * Class ParamsExtractor
- *
- * @package ZE\ContentValidation\Extractor
- * @author  Diego Drigani <d.drigani@mvlabs.it>
- */
 class ParamsExtractor implements DataExtractorInterface
 {
-    /**
-     * @var RouterInterface $route
-     */
-    private $router;
+    private RouterInterface $router;
 
-    /**
-     * OptionsExtractor constructor.
-     *
-     * @param RouterInterface $router
-     * @internal param array $config
-     */
     public function __construct(RouterInterface $router)
     {
         $this->router = $router;
     }
 
     /**
-     * @param RequestInterface $request
      * @return mixed
      */
-    public function extractData(RequestInterface $request)
+    public function extractData(ServerRequestInterface $request)
     {
         $routeResult = $this->router->match($request);
+
         return $routeResult->getMatchedParams();
     }
 }

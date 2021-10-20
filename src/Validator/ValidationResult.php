@@ -1,8 +1,9 @@
 <?php
 /**
- * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ * ze-content-validation (https://github.com/func0der/ze-content-validation)
  *
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @copyright Copyright (c) 2021 func0der
  * @license   MIT
  */
 
@@ -10,49 +11,42 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Validator;
 
-use Zend\InputFilter\InputFilterInterface;
+use Laminas\InputFilter\InputFilterInterface;
 
-/**
- * Class ValidationResult
- *
- * @package ZE\ContentValidation\Validator
- * @author  Diego Drigani<d.drigani@mvlabs.it>
- */
 final class ValidationResult implements ValidationResultInterface
 {
     /**
-     * @var array
+     * @var mixed[]
      */
-    private $rawValues;
+    private array $rawValues;
 
     /**
-     * @var array
+     * @var mixed[]
      */
-    private $values;
+    private array $values;
 
     /**
-     * @var array
+     * @var array<string, string[]>
      */
-    private $messages;
+    private array $messages;
 
     /**
      * @var null|string
      */
-    private $method;
+    private ?string $method;
 
     /**
      * ValidationResult constructor.
      *
-     * @param array       $rawValues
-     * @param array       $values
-     * @param array       $messages
-     * @param null|string $method
+     * @param mixed[] $rawValues
+     * @param mixed[] $values
+     * @param array<string, string[]> $messages
      */
     public function __construct(
         array $rawValues,
         array $values,
         array $messages,
-        $method = null
+        ?string $method
     ) {
         $this->rawValues = $rawValues;
         $this->values = $values;
@@ -60,7 +54,7 @@ final class ValidationResult implements ValidationResultInterface
         $this->method = $method;
     }
 
-    public static function buildFromInputFilter(InputFilterInterface $inputFilter, $method)
+    public static function buildFromInputFilter(InputFilterInterface $inputFilter, string $method): self
     {
         $messages = [];
 
@@ -69,6 +63,7 @@ final class ValidationResult implements ValidationResultInterface
                 $messages[$message->getName()] = $message->getMessages();
             }
         }
+
         // Return validation result
         return new self(
             $inputFilter->getRawValues(),
@@ -78,34 +73,22 @@ final class ValidationResult implements ValidationResultInterface
         );
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function isValid()
+    public function isValid(): bool
     {
         return (count($this->messages) === 0);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getMessages()
+    public function getMessages(): array
     {
         return $this->messages;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getRawValues()
+    public function getRawValues(): array
     {
         return $this->rawValues;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getValues()
+    public function getValues(): array
     {
         return $this->values;
     }

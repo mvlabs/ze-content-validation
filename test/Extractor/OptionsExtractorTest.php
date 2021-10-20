@@ -1,8 +1,9 @@
 <?php
 /**
- * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ * ze-content-validation (https://github.com/func0der/ze-content-validation)
  *
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @copyright Copyright (c) 2021 func0der
  * @license   MIT
  */
 
@@ -11,41 +12,44 @@ declare(strict_types=1);
 namespace ZETest\ContentValidation\Extractor;
 
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
+use Laminas\Http\Request as LaminasRequest;
+use Laminas\InputFilter\InputFilter;
+use Laminas\Router\Http\TreeRouteStack;
+use Mezzio\Router\LaminasRouter;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouterInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
+use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use ZE\ContentValidation\Extractor\OptionsExtractor;
-use Zend\Expressive\Router\Route;
-use Zend\Expressive\Router\RouterInterface;
-use Zend\Expressive\Router\ZendRouter;
-use Zend\Http\Request as ZendRequest;
-use Zend\Router\Http\TreeRouteStack;
-use Zend\Stratigility\Http\Request;
 
-class OptionExtractorTest extends TestCase
+class OptionsExtractorTest extends TestCase
 {
-    private $config;
-    private $configValidation;
-    /**
-     * @var RouterInterface $router
-     */
-    private $router;
-    private static $url = 'http://mvlabs.it';
+    use ProphecyTrait;
 
-    protected function setUp()
+    /**
+     * @var array<string, array<string, class-string>>
+     */
+    private array $configValidation;
+    private RouterInterface $router;
+    private static string $url = 'https://github.com';
+
+    protected function setUp(): void
     {
         $this->configValidation = [];
 
         $middleware = $this->getMiddleware();
         $route = $this->prophesize(Route::class);
         $route->getName()->willReturn('contacts');
-        $routeMatch = new \Zend\Router\Http\RouteMatch([1], 1);
+        $routeMatch = new \Laminas\Router\Http\RouteMatch([1], 1);
         $routeMatch->setMatchedRouteName('contacts');
-        $this->zendRouter = $this->prophesize(TreeRouteStack::class);
-        $this->zendRouter->match(Argument::type(ZendRequest::class))->willReturn($routeMatch);
-        $this->zendRouter->addRoute('contacts', [
+        $laminasRouter = $this->prophesize(TreeRouteStack::class);
+        $laminasRouter->match(Argument::type(LaminasRequest::class))->willReturn($routeMatch);
+        $laminasRouter->addRoute('contacts', [
             'type' => 'segment',
             'options' => [
                 'route' => '/contacts[/:id]',
@@ -68,27 +72,29 @@ class OptionExtractorTest extends TestCase
                         "regex" => "",
                         "defaults" =>
                             [
-                                "method_not_allowed" => "/contacts[/:id]"
+                                "method_not_allowed" => "/contacts[/:id]",
                             ],
-                            "spec" => ""
-                    ]
-                ]
+                        "spec" => "",
+                    ],
+                ],
             ],
         ])->shouldBeCalled();
 
-        $router = new ZendRouter($this->zendRouter->reveal());
-        $router->addRoute(new Route(
-            '/contacts[/:id]',
-            $middleware,
-            [
-                RequestMethod::METHOD_GET,
-                RequestMethod::METHOD_DELETE,
-                RequestMethod::METHOD_PATCH,
-                RequestMethod::METHOD_PUT,
-                RequestMethod::METHOD_POST
-            ],
-            'contacts'
-        ));
+        $router = new LaminasRouter($laminasRouter->reveal());
+        $router->addRoute(
+            new Route(
+                '/contacts[/:id]',
+                $middleware,
+                [
+                    RequestMethod::METHOD_GET,
+                    RequestMethod::METHOD_DELETE,
+                    RequestMethod::METHOD_PATCH,
+                    RequestMethod::METHOD_PUT,
+                    RequestMethod::METHOD_POST,
+                ],
+                'contacts'
+            )
+        );
 
         $this->router = $router;
     }
@@ -98,13 +104,13 @@ class OptionExtractorTest extends TestCase
         return $this->prophesize(MiddlewareInterface::class)->reveal();
     }
 
-    public function testNoOptionsWithRouteMatchReturnsEmptyValidationConfig()
+    public function testNoOptionsWithRouteMatchReturnsEmptyValidationConfig(): void
     {
         /**
          * Test no options with route match
          */
         $optionExtractor = new OptionsExtractor($this->configValidation, $this->router);
-        $this->assertEquals(
+        self::assertEquals(
             [],
             $optionExtractor->getOptionsForRequest(
                 $this->getRequestProphecy(self::$url)->reveal()
@@ -112,8 +118,7 @@ class OptionExtractorTest extends TestCase
         );
     }
 
-
-    public function testOptionsExistWithRouteMatchReturnsARightValidatorConfig()
+    public function testOptionsExistWithRouteMatchReturnsARightValidatorConfig(): void
     {
 
         /**
@@ -122,7 +127,7 @@ class OptionExtractorTest extends TestCase
         $this->applyValidationConfig();
         $optionExtractor = new OptionsExtractor($this->configValidation, $this->router);
 
-        $this->assertEquals(
+        self::assertEquals(
             $this->configValidation['contacts'],
             $optionExtractor->getOptionsForRequest(
                 $this->getRequestProphecy(self::$url)->reveal()
@@ -131,21 +136,25 @@ class OptionExtractorTest extends TestCase
         /**
          * Test options exist no route match
          */
-        $this->assertEquals(
+        self::assertEquals(
             $this->configValidation['contacts'],
             $optionExtractor->getOptionsForRequest(
-
                 $this->getRequestProphecy('')->reveal()
             )
         );
     }
 
-    public function getRequestProphecy($uriString, $requestMethod = RequestMethod::METHOD_GET)
-    {
+    /**
+     * @return ObjectProphecy<ServerRequestInterface>
+     */
+    public function getRequestProphecy(
+        string $uriString,
+        string $requestMethod = RequestMethod::METHOD_GET
+    ): ObjectProphecy {
         $request = $this->prophesize(ServerRequestInterface::class);
         $uri = $this->prophesize(UriInterface::class);
         $uri->getPath()->willReturn($uriString);
-        $uri->__toString()->willReturn('http://www.example.com/'.$uriString);
+        $uri->__toString()->willReturn('http://www.example.com/' . $uriString);
         $request->getMethod()->willReturn($requestMethod);
         $request->getUri()->will([$uri, 'reveal']);
         $request->getHeaders()->willReturn([]);
@@ -156,14 +165,12 @@ class OptionExtractorTest extends TestCase
         return $request;
     }
 
-    /**
-     * Helper for applying the validation
-     */
-    private function applyValidationConfig()
+    private function applyValidationConfig(): void
     {
         $this->configValidation = [
-            'contacts' => [ //route name
-                '*' => ContactInputFilter::class
+            // route name
+            'contacts' => [
+                '*' => InputFilter::class,
             ],
         ];
     }

@@ -1,8 +1,9 @@
 <?php
 /**
- * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ * ze-content-validation (https://github.com/func0der/ze-content-validation)
  *
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @copyright Copyright (c) 2021 func0der
  * @license   MIT
  */
 
@@ -11,8 +12,16 @@ declare(strict_types=1);
 namespace ZETest\ContentValidation\Extractor;
 
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
+use Laminas\Diactoros\ServerRequestFactory;
+use Laminas\Diactoros\Stream;
+use Laminas\Diactoros\UploadedFile;
+use Laminas\Http\Request as LaminasRequest;
+use Laminas\Router\Http\TreeRouteStack;
+use Mezzio\Router\LaminasRouter;
+use Mezzio\Router\Route;
 use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Server\MiddlewareInterface;
 use ZE\ContentValidation\Extractor\BodyExtractor;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
@@ -20,23 +29,18 @@ use ZE\ContentValidation\Extractor\DataExtractorInterface;
 use ZE\ContentValidation\Extractor\FileExtractor;
 use ZE\ContentValidation\Extractor\ParamsExtractor;
 use ZE\ContentValidation\Extractor\QueryExtractor;
-use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\UploadedFile;
-use Zend\Expressive\Router\Route;
-use Zend\Expressive\Router\ZendRouter;
-use Zend\Http\Request as ZendRequest;
-use Zend\Router\Http\TreeRouteStack;
 
 class DataExtractorChainTest extends TestCase
 {
-    public function testGetDataFromRequestFromEmptyChain()
+    use ProphecyTrait;
+
+    public function testGetDataFromRequestFromEmptyChain(): void
     {
         $dataExtractorChain = new DataExtractorChain([]);
         $request = ServerRequestFactory::fromGlobals()
             ->withMethod('POST')
             ->withParsedBody([]);
         $actual = $dataExtractorChain->getDataFromRequest($request);
-
 
         self::assertCount(0, $actual);
     }
@@ -46,11 +50,11 @@ class DataExtractorChainTest extends TestCase
         return $this->prophesize(MiddlewareInterface::class)->reveal();
     }
 
-    public function testGetDataFromRequestDefaultExtraction()
+    public function testGetDataFromRequestDefaultExtraction(): void
     {
         $extractors = [
             $firstExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
-            $secondExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock()
+            $secondExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
         ];
 
         $dataExtractorChain = new DataExtractorChain($extractors);
@@ -62,19 +66,23 @@ class DataExtractorChainTest extends TestCase
                 'Fizz' => 'Buzz',
             ]);
 
-        $firstExtractor->expects(self::any())->method('extractData')->will(self::returnValue([
-            'Foo' => 'Bar',
-            'Bar' => 'Foo',
-        ]));
+        $firstExtractor->expects(self::any())->method('extractData')->will(
+            self::returnValue([
+                'Foo' => 'Bar',
+                'Bar' => 'Foo',
+            ])
+        );
 
-        $secondExtractor->expects(self::any())->method('extractData')->will(self::returnValue([
-            'Foo' => 'FooBar',
-            'Fizz' => 'Buzz',
-        ]));
+        $secondExtractor->expects(self::any())->method('extractData')->will(
+            self::returnValue([
+                'Foo' => 'FooBar',
+                'Fizz' => 'Buzz',
+            ])
+        );
 
         $actual = $dataExtractorChain->getDataFromRequest($request);
 
-        self::assertArraySubset(
+        self::assertSame(
             [
                 'Foo' => 'FooBar',
                 'Bar' => 'Foo',
@@ -84,11 +92,11 @@ class DataExtractorChainTest extends TestCase
         );
     }
 
-    public function testGetDataFromRequesExtractTraversable()
+    public function testGetDataFromRequesExtractTraversable(): void
     {
         $extractors = [
             $firstExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
-            $secondExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock()
+            $secondExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
         ];
 
         $dataExtractorChain = new DataExtractorChain($extractors);
@@ -100,21 +108,29 @@ class DataExtractorChainTest extends TestCase
                 'Fizz' => 'Buzz',
             ]);
 
-        $firstExtractor->expects(self::any())->method('extractData')->will(self::returnValue(new \ArrayIterator([
-            'Foo' => [
-                'Fizz' => 'Buzz',
-            ],
-        ])));
+        $firstExtractor->expects(self::any())->method('extractData')->will(
+            self::returnValue(
+                new \ArrayIterator([
+                    'Foo' => [
+                        'Fizz' => 'Buzz',
+                    ],
+                ])
+            )
+        );
 
-        $secondExtractor->expects(self::any())->method('extractData')->will(self::returnValue(new \ArrayIterator([
-            'Foo' => [
-                'Fizz' => 'Bar',
-            ],
-        ])));
+        $secondExtractor->expects(self::any())->method('extractData')->will(
+            self::returnValue(
+                new \ArrayIterator([
+                    'Foo' => [
+                        'Fizz' => 'Bar',
+                    ],
+                ])
+            )
+        );
 
         $actual = $dataExtractorChain->getDataFromRequest($request);
 
-        self::assertArraySubset(
+        self::assertSame(
             [
                 'Foo' => [
                     'Fizz' => 'Bar',
@@ -127,12 +143,13 @@ class DataExtractorChainTest extends TestCase
     /**
      * //@expectedException ZE\ContentValidation\Exception\UnexpectedValueException
      */
-    public function testGetDataFromRequestInvalidExtraction()
+    public function testGetDataFromRequestInvalidExtraction(): void
     {
 
         $extractors = [
-            $extractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock()
+            $extractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
         ];
+        $extractor->expects(self::once())->method('extractData')->willReturn([]);
 
         $dataExtractorChain = new DataExtractorChain($extractors);
 
@@ -148,18 +165,18 @@ class DataExtractorChainTest extends TestCase
         $dataExtractorChain->getDataFromRequest($request);
     }
 
-    public function testParamsExtractorExtractDataFromRequestOnPostAndIsOk()
+    public function testParamsExtractorExtractDataFromRequestOnPostAndIsOk(): void
     {
         $routeParams = ['id' => 1];
         $route = $this->prophesize(Route::class);
         $route->getName()->willReturn('contacts');
 
-        $routeMatch = new \Zend\Router\Http\RouteMatch($routeParams, 1);
+        $routeMatch = new \Laminas\Router\Http\RouteMatch($routeParams, 1);
         $routeMatch->setMatchedRouteName('contacts');
-        $this->zendRouter = $this->prophesize(TreeRouteStack::class);
-        $this->zendRouter->match(Argument::type(ZendRequest::class))->willReturn($routeMatch);
+        $laminasRouter = $this->prophesize(TreeRouteStack::class);
+        $laminasRouter->match(Argument::type(LaminasRequest::class))->willReturn($routeMatch);
         $middleware = $this->getMiddleware();
-        $this->zendRouter->addRoute('contacts', [
+        $laminasRouter->addRoute('contacts', [
             'type' => 'segment',
             'options' => [
                 'route' => '/contacts[/:id]',
@@ -182,26 +199,28 @@ class DataExtractorChainTest extends TestCase
                         "regex" => "",
                         "defaults" =>
                             [
-                                "method_not_allowed" => "/contacts[/:id]"
+                                "method_not_allowed" => "/contacts[/:id]",
                             ],
-                            "spec" => ""
-                    ]
-                ]
+                        "spec" => "",
+                    ],
+                ],
             ],
         ])->shouldBeCalled();
-        $router = new ZendRouter($this->zendRouter->reveal());
-        $router->addRoute(new Route(
-            '/contacts[/:id]',
-            $middleware,
-            [
-                RequestMethod::METHOD_GET,
-                RequestMethod::METHOD_DELETE,
-                RequestMethod::METHOD_PATCH,
-                RequestMethod::METHOD_PUT,
-                RequestMethod::METHOD_POST
-            ],
-            'contacts'
-        ));
+        $router = new LaminasRouter($laminasRouter->reveal());
+        $router->addRoute(
+            new Route(
+                '/contacts[/:id]',
+                $middleware,
+                [
+                    RequestMethod::METHOD_GET,
+                    RequestMethod::METHOD_DELETE,
+                    RequestMethod::METHOD_PATCH,
+                    RequestMethod::METHOD_PUT,
+                    RequestMethod::METHOD_POST,
+                ],
+                'contacts'
+            )
+        );
         $extractor = new ParamsExtractor($router);
 
         $data = [
@@ -214,13 +233,13 @@ class DataExtractorChainTest extends TestCase
 
         $actual = $extractor->extractData($request);
 
-        self::assertArraySubset(
+        self::assertSame(
             $routeParams,
             $actual
         );
     }
 
-    public function testBodyExtractorExtractDataFromRequestOnPostAndIsOk()
+    public function testBodyExtractorExtractDataFromRequestOnPostAndIsOk(): void
     {
         $extractor = new BodyExtractor();
         $data = [
@@ -228,19 +247,19 @@ class DataExtractorChainTest extends TestCase
             'Fizz' => 'Buzz',
         ];
 
-            $request = ServerRequestFactory::fromGlobals()
+        $request = ServerRequestFactory::fromGlobals()
             ->withMethod('POST')
             ->withParsedBody($data);
 
         $actual = $extractor->extractData($request);
 
-        self::assertArraySubset(
+        self::assertSame(
             $data,
             $actual
         );
     }
 
-    public function testQueryExtractorExtractDataFromRequestOnGetAndIsOk()
+    public function testQueryExtractorExtractDataFromRequestOnGetAndIsOk(): void
     {
         $extractor = new QueryExtractor();
         $data = [
@@ -254,42 +273,42 @@ class DataExtractorChainTest extends TestCase
 
         $actual = $extractor->extractData($request);
 
-        self::assertArraySubset(
+        self::assertSame(
             $data,
             $actual
         );
     }
 
-    public function testFileExtractorExtractDataFromRequestOnPostAndIsOk()
+    public function testFileExtractorExtractDataFromRequestOnPostAndIsOk(): void
     {
         $extractor = new FileExtractor();
         $data = [
             'filename' => [
-                'tmp_name' => '',
+                'tmp_name' => null,
                 'name' => '/tmp/12345678adf',
                 'type' => 'text/plain',
-                'size' => '10',
-                'error' => null
-            ]
+                'size' => 10,
+                'error' => UPLOAD_ERR_OK,
+            ],
         ];
 
         $uploadedFile = $this->prophesize(UploadedFile::class);
 
-        $uploadedFile->getStream()->willReturn('');
+        $uploadedFile->getStream()->willReturn($this->prophesize(Stream::class)->reveal());
         $uploadedFile->getClientFilename()->willReturn('/tmp/12345678adf');
         $uploadedFile->getClientMediaType()->willReturn('text/plain');
-        $uploadedFile->getSize()->willReturn('10');
-        $uploadedFile->getError()->willReturn(null);
+        $uploadedFile->getSize()->willReturn(10);
+        $uploadedFile->getError()->willReturn(UPLOAD_ERR_OK);
 
         $request = ServerRequestFactory::fromGlobals()
             ->withMethod('POST')
             ->withUploadedFiles([
-                'filename' => $uploadedFile->reveal()
+                'filename' => $uploadedFile->reveal(),
             ]);
 
         $actual = $extractor->extractData($request);
 
-        self::assertArraySubset(
+        self::assertSame(
             $data,
             $actual
         );

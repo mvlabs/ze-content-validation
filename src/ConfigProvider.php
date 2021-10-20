@@ -1,8 +1,9 @@
 <?php
 /**
- * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ * ze-content-validation (https://github.com/func0der/ze-content-validation)
  *
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @copyright Copyright (c) 2021 func0der
  * @license   MIT
  */
 
@@ -20,22 +21,13 @@ use ZE\ContentValidation\Middleware\ValidationMiddleware;
 use ZE\ContentValidation\Middleware\ValidationMiddlewareFactory;
 use ZE\ContentValidation\Validator\ValidatorHandler;
 use ZE\ContentValidation\Validator\ValidatorHandlerFactory;
-use Zend\Expressive\Container\ErrorResponseGeneratorFactory;
-use Zend\Expressive\FinalHandler;
-use Zend\InputFilter\InputFilterPluginManager;
-use zf2timo\Bridge\Factory\InputFilterManagerFactory;
 
-/**
- * Class ConfigProvider
- *
- * @package ZE\ContentValidation
- */
 class ConfigProvider
 {
     /**
-     * @return mixed
+     * @return array<string, mixed>
      */
-    public function __invoke()
+    public function __invoke(): array
     {
         return [
             'dependencies' => $this->getDependencyConfig(),
@@ -44,39 +36,30 @@ class ConfigProvider
     }
 
     /**
-     * Provide default container dependency configuration.
-     *
-     * @return array
+     * @return array<string, array<class-string, class-string>>
      */
-    public function getDependencyConfig()
+    public function getDependencyConfig(): array
     {
         return [
             'factories' => [
                 ValidationMiddleware::class => ValidationMiddlewareFactory::class,
                 ValidatorHandler::class => ValidatorHandlerFactory::class,
-                InputFilterPluginManager::class => InputFilterManagerFactory::class,
                 OptionsExtractor::class => OptionsExtractorFactory::class,
                 ParamsExtractor::class => ParamsExtractorFactory::class,
                 DataExtractorChain::class => DataExtractorChainFactory::class,
-                ErrorHandler::class => ErrorResponseGeneratorFactory::class,
             ],
-            'aliases' => [
-                'InputFilterManager' => InputFilterPluginManager::class,
-            ]
         ];
     }
 
     /**
-     * Provide default input filters configuration.
-     *
-     * @return array
+     * @return array<string, class-string[]>
      */
-    public function getInputFiltersConfig()
+    public function getInputFiltersConfig(): array
     {
         return [
             'abstract_factories' => [
-                \Zend\InputFilter\InputFilterAbstractServiceFactory::class,
-            ]
+                \Laminas\InputFilter\InputFilterAbstractServiceFactory::class,
+            ],
         ];
     }
 }
