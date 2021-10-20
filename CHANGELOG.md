@@ -9,5 +9,5 @@
 
 ### Changed
 
-  * Support PHP7.4 only
+  * Support PHP7.4+ only
   * Migrate to Mezzio/Laminas
