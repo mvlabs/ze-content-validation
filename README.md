@@ -1,6 +1,6 @@
 Zend Expressive Content Validation 
 ====
-[![Build Status](https://travis-ci.org/mvlabs/ze-content-validation.svg?branch=master)](https://travis-ci.org/mvlabs/ze-content-validation)
+[![Build Status](https://travis-ci.org/func0der/ze-content-validation.svg?branch=master)](https://travis-ci.org/mvlabs/ze-content-validation)
 
 Introduction
 ------------
@@ -12,7 +12,7 @@ Allows the following:
 - Defining named input filters.
 - Mapping named input filters to routes.
 - Returning a PSR-7 response representation of application/problem with validation error messages on invalid input using 
-[Zend Problem Details](https://github.com/zendframework/zend-problem-details)
+[Laminas Problem Details](https://github.com/mezzio/mezzio-problem-details)
 
 Installation
 ------------
@@ -20,7 +20,7 @@ Installation
 Run the following `composer` command:
 
 ```console
-$ composer require mvlabs/ze-content-validation
+$ composer require func0der/ze-content-validation
 ```
 
 Configuration
@@ -45,8 +45,8 @@ In the above example, the \App\InputFilter\UserInputFilter will be selected for 
 `input_filter_spec` is for configuration-driven creation of input filters.  The keys for this array
 will be a unique name, but more often based off the service name it is mapped to under the
 `ze-content-validation` key. The values will be an input filter configuration array, as is
-described in the ZF2 manual [section on input
-filters](http://zf2.readthedocs.org/en/latest/modules/zend.input-filter.intro.html).
+described in the Laminas manual [section on input
+filters](https://docs.laminas.dev/laminas-inputfilter/intro/).
 
 Example:
 
