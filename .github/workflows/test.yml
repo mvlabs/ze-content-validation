@@ -1,0 +1,60 @@
+name: CI-Test
+
+on:
+  pull_request:
+  push:
+
+env:
+  COMPOSER_FLAGS: "--ansi --no-interaction --no-progress --prefer-dist"
+  COMPOSER_UPDATE_FLAGS: ""
+
+jobs:
+  run:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ ubuntu-20.04 ]
+        php-version: [ '7.4', '8.0', '8.1' ]
+        dependency: [ 'lowest', 'highest' ]
+    name: PHP ${{ matrix.php-version }} [${{ matrix.dependency }}] on ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          #extensions: intl #optional
+          ini-values: "post_max_size=256M" #optional
+
+      - name: "Update to latest Composer snapshot"
+        run: "sudo -i composer self-update --snapshot"
+
+      - name: "Determine composer cache directory"
+        id: "determine-composer-cache-directory"
+        run: "echo \"::set-output name=directory::$(composer config cache-dir)\""
+
+      - name: "Cache dependency installed with composer"
+        uses: "actions/cache@v1"
+        with:
+          path: "${{ steps.determine-composer-cache-directory.outputs.directory }}"
+          key: "php-${{ matrix.php-version }}-${{ matrix.dependency }}"
+          restore-keys: "php-${{ matrix.php-version }}-${{ matrix.dependency }}"
+
+      #- name: "install phpcs"
+      #  run: "composer global require \"squizlabs/php_codesniffer=*\""
+
+      - name: "Update to lowest dependency from composer.json"
+        if: "matrix.dependency  == 'lowest'"
+        run: "composer update ${{ env.COMPOSER_UPDATE_FLAGS }} ${{ env.COMPOSER_FLAGS }} --prefer-lowest"
+
+      - name: "Update to latest dependency from composer.json"
+        if: "matrix.dependency == 'highest'"
+        run: "composer update ${{ env.COMPOSER_UPDATE_FLAGS }} ${{ env.COMPOSER_FLAGS }}"
+
+      - name: "phpunit"
+        run: "php vendor/bin/phpunit"
+
+      - name: "phpstan"
+        run: "php vendor/bin/phpstan analyse --no-interaction"
