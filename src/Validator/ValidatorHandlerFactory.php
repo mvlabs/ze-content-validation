@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Validator;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\InputFilter\InputFilterPluginManager;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
 use ZE\ContentValidation\Extractor\OptionsExtractor;

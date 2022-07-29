@@ -11,16 +11,17 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Extractor;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class DataExtractorChainFactory
 {
     public function __invoke(ContainerInterface $container): DataExtractorChain
     {
+        /** @var array<int, DataExtractorInterface> $extractors */
         $extractors = [
-            new QueryExtractor(),
-            new BodyExtractor(),
-            new FileExtractor(),
+            $container->get(QueryExtractor::class),
+            $container->get(BodyExtractor::class),
+            $container->get(FileExtractor::class),
             $container->get(ParamsExtractor::class),
         ];
 

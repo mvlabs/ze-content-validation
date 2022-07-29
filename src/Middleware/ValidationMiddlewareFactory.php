@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Middleware;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mezzio\ProblemDetails\ProblemDetailsResponseFactory;
 use ZE\ContentValidation\Validator\ValidatorHandler;
 

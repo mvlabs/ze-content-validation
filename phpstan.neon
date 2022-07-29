@@ -1,9 +1,12 @@
 includes:
-  - vendor/jangregor/phpstan-prophecy/extension.neon
-  - vendor/phpstan/phpstan-deprecation-rules/rules.neon
-  - vendor/phpstan/phpstan-phpunit/extension.neon
-  - vendor/phpstan/phpstan-phpunit/rules.neon
-  - vendor/phpstan/phpstan-strict-rules/rules.neon
+    - phpstan-baseline.neon
+    - vendor/bnf/phpstan-psr-container/extension.neon
+    - vendor/jangregor/phpstan-prophecy/extension.neon
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
 parameters:
   tmpDir: phpstan
   parallel:

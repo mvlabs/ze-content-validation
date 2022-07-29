@@ -1,0 +1,21 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Cannot access offset 'ze\\-content…' on mixed\\.$#"
+			count: 1
+			path: src/Extractor/OptionsExtractorFactory.php
+
+		-
+			message: "#^Call to an undefined method Laminas\\\\InputFilter\\\\InputFilterInterface\\|Laminas\\\\InputFilter\\\\InputInterface\\:\\:getName\\(\\)\\.$#"
+			count: 1
+			path: src/Validator/ValidationResult.php
+
+		-
+			message: "#^Parameter \\#3 \\$messages of class ZE\\\\ContentValidation\\\\Validator\\\\ValidationResult constructor expects array\\<string, array\\<string\\>\\>, array\\<string, array\\<array\\<string\\>\\|string\\>\\> given\\.$#"
+			count: 1
+			path: src/Validator/ValidationResult.php
+
+		-
+			message: "#^Method ZE\\\\ContentValidation\\\\Validator\\\\ValidatorHandler\\:\\:getInputFilter\\(\\) should return Laminas\\\\InputFilter\\\\InputFilter but returns mixed\\.$#"
+			count: 1
+			path: src/Validator/ValidatorHandler.php

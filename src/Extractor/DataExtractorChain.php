@@ -18,12 +18,12 @@ use ZE\ContentValidation\Exception\UnexpectedValueException;
 class DataExtractorChain
 {
     /**
-     * @var DataExtractorInterface[]
+     * @var array<int, DataExtractorInterface>
      */
     protected $extractors = [];
 
     /**
-     * @param DataExtractorInterface[] $extractors
+     * @param array<int, DataExtractorInterface> $extractors
      */
     public function __construct(array $extractors)
     {
@@ -33,11 +33,11 @@ class DataExtractorChain
     /**
      * @return mixed[]
      */
-    public function getDataFromRequest(ServerRequestInterface $request)
+    public function getDataFromRequest(ServerRequestInterface $request): array
     {
         $result = [];
         $dataSets = array_map(
-            function (DataExtractorInterface $extractor) use ($request): array {
+            static function (DataExtractorInterface $extractor) use ($request): array {
                 $data = $extractor->extractData($request);
 
                 if ($data instanceof \Traversable) {
