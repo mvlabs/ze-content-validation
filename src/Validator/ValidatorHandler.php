@@ -64,7 +64,9 @@ class ValidatorHandler implements ValidatorInterface
 
             if (array_key_exists($method, $validation)) {
                 return $this->getInputFilter($validation[$method]);
-            } elseif (array_key_exists('*', $validation)) {
+            }
+
+            if (array_key_exists('*', $validation)) {
                 return $this->getInputFilter($validation['*']);
             }
         }
@@ -74,11 +76,11 @@ class ValidatorHandler implements ValidatorInterface
     }
 
     /**
-     * @param mixed $inputFilterService
+     * @param class-string<InputFilter> $inputFilterService
      *
      * @throws ValidationClassNotExists
      */
-    private function getInputFilter($inputFilterService): InputFilter
+    private function getInputFilter(string $inputFilterService): InputFilter
     {
         $inputFilter = $this->inputFilterManager->get($inputFilterService);
 
@@ -91,6 +93,6 @@ class ValidatorHandler implements ValidatorInterface
             );
         }
 
-        return $this->inputFilterManager->get($inputFilterService);
+        return $inputFilter;
     }
 }

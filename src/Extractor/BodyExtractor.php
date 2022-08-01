@@ -16,7 +16,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class BodyExtractor implements DataExtractorInterface
 {
     /**
-     * @return mixed
+     * @return array<string, mixed>|object|null
      */
     public function extractData(ServerRequestInterface $request)
     {

@@ -92,4 +92,9 @@ final class ValidationResult implements ValidationResultInterface
     {
         return $this->values;
     }
+
+    public function getMethod(): ?string
+    {
+        return $this->method;
+    }
 }

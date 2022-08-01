@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Extractor;
 
+use Laminas\InputFilter\InputFilter;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,7 +25,7 @@ class OptionsExtractor
     private RouterInterface $router;
 
     /**
-     * @param array<string, array<string, string>> $config
+     * @param array<string, array<string, class-string<InputFilter>>> $config
      */
     public function __construct(array $config, RouterInterface $router)
     {
@@ -33,7 +34,7 @@ class OptionsExtractor
     }
 
     /**
-     * @return mixed[]
+     * @return array<string, class-string<InputFilter>>
      */
     public function getOptionsForRequest(ServerRequestInterface $request): array
     {

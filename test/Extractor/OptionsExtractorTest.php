@@ -32,7 +32,7 @@ class OptionsExtractorTest extends TestCase
     use ProphecyTrait;
 
     /**
-     * @var array<string, array<string, class-string>>
+     * @var array<string, array<string, class-string<InputFilter>>>
      */
     private array $configValidation;
     private RouterInterface $router;

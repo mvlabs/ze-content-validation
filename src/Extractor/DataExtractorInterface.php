@@ -12,11 +12,12 @@ declare(strict_types=1);
 namespace ZE\ContentValidation\Extractor;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Traversable;
 
 interface DataExtractorInterface
 {
     /**
-     * @return mixed
+     * @return array<string, mixed>|Traversable<string, mixed>|object|null
      */
     public function extractData(ServerRequestInterface $request);
 }

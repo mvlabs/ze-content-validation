@@ -1,11 +1,11 @@
-Zend Expressive Content Validation 
+Mezzio Content Validation 
 ====
 [![Build Status](https://app.travis-ci.com/func0der/ze-content-validation.svg?branch=main)](https://app.travis-ci.com/func0der/ze-content-validation)
 
 Introduction
 main
 
-Zend Expressive Content Validation is a Middleware for automating validation of incoming input.
+`Mezzio Content Validation` (former `Zend Expressive Content Validation`) is a Mezzio middleware for automating validation of incoming input.
 
 Allows the following:
 

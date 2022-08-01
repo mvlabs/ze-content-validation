@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Extractor;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Mezzio\Router\RouterInterface;
 
 class ParamsExtractorFactory
