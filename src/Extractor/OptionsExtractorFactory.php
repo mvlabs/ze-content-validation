@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Extractor;
 
+use Laminas\InputFilter\InputFilter;
 use Psr\Container\ContainerInterface;
 use Mezzio\Router\RouterInterface;
 
@@ -18,7 +19,7 @@ class OptionsExtractorFactory
 {
     public function __invoke(ContainerInterface $container): OptionsExtractor
     {
-        /** @var  array<string, array<string, string>> $validationConfig */
+        /** @var array<string, array<string, class-string<InputFilter>>> $validationConfig */
         $validationConfig = $container->get('config')['ze-content-validation'] ?? [];
 
         return new OptionsExtractor(

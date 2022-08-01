@@ -93,6 +93,6 @@ class ValidatorHandler implements ValidatorInterface
             );
         }
 
-        return $this->inputFilterManager->get($inputFilterService);
+        return $inputFilter;
     }
 }

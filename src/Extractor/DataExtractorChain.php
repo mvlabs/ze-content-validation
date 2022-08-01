@@ -20,7 +20,7 @@ class DataExtractorChain
     /**
      * @var array<int, DataExtractorInterface>
      */
-    protected $extractors = [];
+    protected array $extractors = [];
 
     /**
      * @param array<int, DataExtractorInterface> $extractors
@@ -31,7 +31,7 @@ class DataExtractorChain
     }
 
     /**
-     * @return mixed[]
+     * @return array<string, mixed>
      */
     public function getDataFromRequest(ServerRequestInterface $request): array
     {

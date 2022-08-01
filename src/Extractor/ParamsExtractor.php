@@ -24,12 +24,10 @@ class ParamsExtractor implements DataExtractorInterface
     }
 
     /**
-     * @return mixed
+     * @return array<string, mixed>
      */
-    public function extractData(ServerRequestInterface $request)
+    public function extractData(ServerRequestInterface $request): array
     {
-        $routeResult = $this->router->match($request);
-
-        return $routeResult->getMatchedParams();
+        return $this->router->match($request)->getMatchedParams();
     }
 }

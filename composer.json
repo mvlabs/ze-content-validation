@@ -29,7 +29,7 @@
         "psr-7"
     ],
     "require": {
-        "php": "^7.4 || ^8.0 || ^8.1",
+        "php": "^7.4 || ^8.0",
         "laminas/laminas-filter": "^2.8",
         "laminas/laminas-http": "^2.7",
         "laminas/laminas-inputfilter": "^2.19",

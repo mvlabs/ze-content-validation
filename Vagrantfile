@@ -1,5 +1,5 @@
 Vagrant.configure("2") do |config|
-  config.vm.box = "debian/contrib-buster64"
+  config.vm.box = "debian/bullseye64"
   config.ssh.forward_agent = true
 
   config.vm.provision "shell", inline: <<-SHELL
@@ -10,10 +10,9 @@ Vagrant.configure("2") do |config|
     apt-get update
 
     # Install PHP and git
-    apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-dom php7.4-json php7.4-xdebug git unzip
+    apt-get install -y php7.4-cli php7.4-xml php7.4-mbstring php7.4-zip php7.4-curl php7.4-dom php7.4-xdebug php8.1-cli php8.1-xml php8.1-mbstring php8.1-zip php8.1-curl php8.1-dom php8.1-xdebug
+    apt-get install -y curl git unzip yamllint
 
-    cd /usr/src
-    sudo apt-get install -y curl
     curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
   SHELL
 

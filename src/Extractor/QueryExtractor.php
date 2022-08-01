@@ -16,9 +16,9 @@ use Psr\Http\Message\ServerRequestInterface;
 class QueryExtractor implements DataExtractorInterface
 {
     /**
-     * @return mixed
+     * @return array<string, mixed>
      */
-    public function extractData(ServerRequestInterface $request)
+    public function extractData(ServerRequestInterface $request): array
     {
         return $request->getQueryParams();
     }
