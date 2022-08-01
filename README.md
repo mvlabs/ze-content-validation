@@ -1,6 +1,6 @@
 Mezzio Content Validation 
 ====
-[![Build Status](https://app.travis-ci.com/func0der/ze-content-validation.svg?branch=main)](https://app.travis-ci.com/func0der/ze-content-validation)
+[![CI-Test](https://github.com/func0der/ze-content-validation/actions/workflows/test.yml/badge.svg)](https://github.com/func0der/ze-content-validation/actions/workflows/test.yml)
 
 Introduction
 main
