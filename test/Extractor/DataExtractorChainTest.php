@@ -11,11 +11,13 @@ declare(strict_types=1);
 
 namespace ZETest\ContentValidation\Extractor;
 
+use ArrayIterator;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use Laminas\Diactoros\ServerRequestFactory;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Http\Request as LaminasRequest;
+use Laminas\Router\Http\RouteMatch;
 use Laminas\Router\Http\TreeRouteStack;
 use Mezzio\Router\LaminasRouter;
 use Mezzio\Router\Route;
@@ -23,6 +25,7 @@ use PHPUnit\Framework\TestCase;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Server\MiddlewareInterface;
+use stdClass;
 use ZE\ContentValidation\Extractor\BodyExtractor;
 use ZE\ContentValidation\Extractor\DataExtractorChain;
 use ZE\ContentValidation\Extractor\DataExtractorInterface;
@@ -92,7 +95,7 @@ class DataExtractorChainTest extends TestCase
         );
     }
 
-    public function testGetDataFromRequesExtractTraversable(): void
+    public function testGetDataFromRequestExtractTraversable(): void
     {
         $extractors = [
             $firstExtractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
@@ -110,7 +113,7 @@ class DataExtractorChainTest extends TestCase
 
         $firstExtractor->expects(self::any())->method('extractData')->will(
             self::returnValue(
-                new \ArrayIterator([
+                new ArrayIterator([
                     'Foo' => [
                         'Fizz' => 'Buzz',
                     ],
@@ -120,7 +123,7 @@ class DataExtractorChainTest extends TestCase
 
         $secondExtractor->expects(self::any())->method('extractData')->will(
             self::returnValue(
-                new \ArrayIterator([
+                new ArrayIterator([
                     'Foo' => [
                         'Fizz' => 'Bar',
                     ],
@@ -140,12 +143,8 @@ class DataExtractorChainTest extends TestCase
         );
     }
 
-    /**
-     * //@expectedException ZE\ContentValidation\Exception\UnexpectedValueException
-     */
     public function testGetDataFromRequestInvalidExtraction(): void
     {
-
         $extractors = [
             $extractor = $this->getMockBuilder(DataExtractorInterface::class)->getMock(),
         ];
@@ -160,7 +159,7 @@ class DataExtractorChainTest extends TestCase
                 'Fizz' => 'Buzz',
             ]);
 
-        $extractor->expects(self::any())->method('extractData')->will(self::returnValue(new \stdClass()));
+        $extractor->expects(self::any())->method('extractData')->will(self::returnValue(new stdClass()));
 
         $dataExtractorChain->getDataFromRequest($request);
     }
@@ -171,7 +170,7 @@ class DataExtractorChainTest extends TestCase
         $route = $this->prophesize(Route::class);
         $route->getName()->willReturn('contacts');
 
-        $routeMatch = new \Laminas\Router\Http\RouteMatch($routeParams, 1);
+        $routeMatch = new RouteMatch($routeParams, 1);
         $routeMatch->setMatchedRouteName('contacts');
         $laminasRouter = $this->prophesize(TreeRouteStack::class);
         $laminasRouter->match(Argument::type(LaminasRequest::class))->willReturn($routeMatch);

@@ -14,6 +14,7 @@ namespace ZETest\ContentValidation\Extractor;
 use Fig\Http\Message\RequestMethodInterface as RequestMethod;
 use Laminas\Http\Request as LaminasRequest;
 use Laminas\InputFilter\InputFilter;
+use Laminas\Router\Http\RouteMatch;
 use Laminas\Router\Http\TreeRouteStack;
 use Mezzio\Router\LaminasRouter;
 use Mezzio\Router\Route;
@@ -35,17 +36,17 @@ class OptionsExtractorTest extends TestCase
      * @var array<string, array<string, class-string<InputFilter>>>
      */
     private array $configValidation;
-    private RouterInterface $router;
     private static string $url = 'https://github.com';
 
-    protected function setUp(): void
+    /**
+     * @return LaminasRouter
+     */
+    public function getRouterMock(): LaminasRouter
     {
-        $this->configValidation = [];
-
         $middleware = $this->getMiddleware();
         $route = $this->prophesize(Route::class);
         $route->getName()->willReturn('contacts');
-        $routeMatch = new \Laminas\Router\Http\RouteMatch([1], 1);
+        $routeMatch = new RouteMatch([1], 1);
         $routeMatch->setMatchedRouteName('contacts');
         $laminasRouter = $this->prophesize(TreeRouteStack::class);
         $laminasRouter->match(Argument::type(LaminasRequest::class))->willReturn($routeMatch);
@@ -95,8 +96,12 @@ class OptionsExtractorTest extends TestCase
                 'contacts'
             )
         );
+        return $router;
+    }
 
-        $this->router = $router;
+    protected function setUp(): void
+    {
+        $this->configValidation = [];
     }
 
     private function getMiddleware(): MiddlewareInterface
@@ -106,10 +111,11 @@ class OptionsExtractorTest extends TestCase
 
     public function testNoOptionsWithRouteMatchReturnsEmptyValidationConfig(): void
     {
+        $router = $this->getRouterMock();
         /**
          * Test no options with route match
          */
-        $optionExtractor = new OptionsExtractor($this->configValidation, $this->router);
+        $optionExtractor = new OptionsExtractor($this->configValidation, $router);
         self::assertEquals(
             [],
             $optionExtractor->getOptionsForRequest(
@@ -120,12 +126,12 @@ class OptionsExtractorTest extends TestCase
 
     public function testOptionsExistWithRouteMatchReturnsARightValidatorConfig(): void
     {
-
+        $router = $this->getRouterMock();
         /**
          * Test options exist with route match
          */
         $this->applyValidationConfig();
-        $optionExtractor = new OptionsExtractor($this->configValidation, $this->router);
+        $optionExtractor = new OptionsExtractor($this->configValidation, $router);
 
         self::assertEquals(
             $this->configValidation['contacts'],
@@ -147,7 +153,7 @@ class OptionsExtractorTest extends TestCase
     /**
      * @return ObjectProphecy<ServerRequestInterface>
      */
-    public function getRequestProphecy(
+    private function getRequestProphecy(
         string $uriString,
         string $requestMethod = RequestMethod::METHOD_GET
     ): ObjectProphecy {
