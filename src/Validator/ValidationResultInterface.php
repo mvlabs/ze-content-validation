@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Validator;
 
+/**
+ * @phpstan-type MessagesArray array<array<array<string[]|string>|string>>
+ */
 interface ValidationResultInterface
 {
     /**
@@ -23,7 +26,7 @@ interface ValidationResultInterface
     /**
      * Get validation messages
      *
-     * @return array<string, string[]>
+     * @return MessagesArray
      */
     public function getMessages(): array;
 
