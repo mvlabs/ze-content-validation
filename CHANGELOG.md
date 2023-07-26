@@ -1,5 +1,16 @@
 # Changelog
 
+# 3.1
+
+### Changed
+
+* Make it possible to have nested input filter definitions
+
+### Removed
+
+* PHP 8.0 support removed
+
+
 # 3.0
 
 ### Added

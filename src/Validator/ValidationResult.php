@@ -13,6 +13,9 @@ namespace ZE\ContentValidation\Validator;
 
 use Laminas\InputFilter\InputFilterInterface;
 
+/**
+ * @phpstan-import-type MessagesArray from ValidationResultInterface
+ */
 final class ValidationResult implements ValidationResultInterface
 {
     /**
@@ -26,7 +29,7 @@ final class ValidationResult implements ValidationResultInterface
     private array $values;
 
     /**
-     * @var array<string, string[]>
+     * @var MessagesArray
      */
     private array $messages;
 
@@ -40,7 +43,7 @@ final class ValidationResult implements ValidationResultInterface
      *
      * @param mixed[] $rawValues
      * @param mixed[] $values
-     * @param array<string, string[]> $messages
+     * @param MessagesArray $messages
      */
     public function __construct(
         array $rawValues,
@@ -59,8 +62,8 @@ final class ValidationResult implements ValidationResultInterface
         $messages = [];
 
         if (! $inputFilter->isValid()) {
-            foreach ($inputFilter->getInvalidInput() as $message) {
-                $messages[$message->getName()] = $message->getMessages();
+            foreach ($inputFilter->getInvalidInput() as $name => $message) {
+                $messages[$name] = $message->getMessages();
             }
         }
 
@@ -78,16 +81,25 @@ final class ValidationResult implements ValidationResultInterface
         return (count($this->messages) === 0);
     }
 
+    /**
+     * @return MessagesArray
+     */
     public function getMessages(): array
     {
         return $this->messages;
     }
 
+    /**
+     * @return mixed[]
+     */
     public function getRawValues(): array
     {
         return $this->rawValues;
     }
 
+    /**
+     * @return mixed[]
+     */
     public function getValues(): array
     {
         return $this->values;
