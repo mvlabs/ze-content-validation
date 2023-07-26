@@ -1,8 +1,9 @@
 <?php
 /**
- * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ * ze-content-validation (https://github.com/func0der/ze-content-validation)
  *
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @copyright Copyright (c) 2021 func0der
  * @license   MIT
  */
 
@@ -10,28 +11,19 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Extractor;
 
-use Psr\Http\Message\RequestInterface;
+use Laminas\Stdlib\ArrayUtils;
+use Psr\Http\Message\ServerRequestInterface;
 use ZE\ContentValidation\Exception\UnexpectedValueException;
-use Zend\Stdlib\ArrayUtils;
 
-/**
- * Class DataExtractorChain
- *
- * @package ZE\ContentValidation\Extractor
- * @author  Diego Drigani <d.drigani@mvlabs.it>
- */
 class DataExtractorChain
 {
-
     /**
-     * @var array DataExtractorInterfacece
+     * @var array<int, DataExtractorInterface>
      */
-    protected $extractors = [];
+    protected array $extractors = [];
 
     /**
-     * ExtractorChain constructor.
-     *
-     * @param array $extractors
+     * @param array<int, DataExtractorInterface> $extractors
      */
     public function __construct(array $extractors)
     {
@@ -39,14 +31,13 @@ class DataExtractorChain
     }
 
     /**
-     * @param RequestInterface $request
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getDataFromRequest(RequestInterface $request)
+    public function getDataFromRequest(ServerRequestInterface $request): array
     {
         $result = [];
         $dataSets = array_map(
-            function (DataExtractorInterface $extractor) use ($request) {
+            static function (DataExtractorInterface $extractor) use ($request): array {
                 $data = $extractor->extractData($request);
 
                 if ($data instanceof \Traversable) {
@@ -62,6 +53,7 @@ class DataExtractorChain
                         )
                     );
                 }
+
                 return $data;
             },
             $this->extractors

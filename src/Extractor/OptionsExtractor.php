@@ -1,8 +1,9 @@
 <?php
 /**
- * ze-content-validation (https://github.com/mvlabs/ze-content-validation)
+ * ze-content-validation (https://github.com/func0der/ze-content-validation)
  *
  * @copyright Copyright (c) 2017 MVLabs(http://mvlabs.it)
+ * @copyright Copyright (c) 2021 func0der
  * @license   MIT
  */
 
@@ -10,34 +11,21 @@ declare(strict_types=1);
 
 namespace ZE\ContentValidation\Extractor;
 
+use Laminas\InputFilter\InputFilter;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouterInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ServerRequestInterface as Request;
-use Zend\Expressive\Router\RouteResult;
-use Zend\Expressive\Router\RouterInterface;
 
-/**
- * Class OptionsExtractor
- *
- * @package ZE\ContentValidation\Extractor
- * @author  Diego Drigani <d.drigani@mvlabs.it>
- */
 class OptionsExtractor
 {
     /**
-     * @var array
+     * @var array<string, array<string, string>>
      */
-    private $config;
+    private array $config;
+    private RouterInterface $router;
 
     /**
-     * @var RouterInterface $route
-     */
-    private $router;
-
-    /**
-     * OptionsExtractor constructor.
-     *
-     * @param array           $config
-     * @param RouterInterface $router
+     * @param array<string, array<string, class-string<InputFilter>>> $config
      */
     public function __construct(array $config, RouterInterface $router)
     {
@@ -46,29 +34,22 @@ class OptionsExtractor
     }
 
     /**
-     * @param Request $request
-     * @return array
+     * @return array<string, class-string<InputFilter>>
      */
-    public function getOptionsForRequest(ServerRequestInterface $request)
+    public function getOptionsForRequest(ServerRequestInterface $request): array
     {
-        /**
-         * @var RouteResult $routeMatch
-         */
         $matchedRoute = $this->router->match($request)->getMatchedRoute();
+
+        if (! $matchedRoute instanceof Route) {
+            return [];
+        }
+
         foreach ($this->config as $routeName => $options) {
             if ($routeName === $matchedRoute->getName()) {
-                return isset($options) ? $options : [];
+                return $options;
             }
         }
 
         return [];
-    }
-
-    /**
-     * @return array
-     */
-    private function getAll()
-    {
-        return $this->config;
     }
 }

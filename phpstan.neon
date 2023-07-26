@@ -1,0 +1,21 @@
+includes:
+    - phpstan-baseline.neon
+    - vendor/bnf/phpstan-psr-container/extension.neon
+    - vendor/jangregor/phpstan-prophecy/extension.neon
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+    - vendor/phpstan/phpstan-phpunit/rules.neon
+    - vendor/phpstan/phpstan-strict-rules/rules.neon
+
+parameters:
+  tmpDir: phpstan
+  parallel:
+    maximumNumberOfProcesses: 4
+    processTimeout: 300.0
+  level: max
+  checkMissingIterableValueType: true
+  checkGenericClassInNonGenericObjectType: false
+  reportUnmatchedIgnoredErrors: true
+  paths:
+    - src
+    - test

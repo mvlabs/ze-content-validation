@@ -1,0 +1,16 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Method ZE\\\\ContentValidation\\\\Extractor\\\\OptionsExtractor\\:\\:getOptionsForRequest\\(\\) should return array\\<string, class\\-string\\<Laminas\\\\InputFilter\\\\InputFilter\\>\\> but returns array\\<string, string\\>\\.$#"
+			count: 1
+			path: src/Extractor/OptionsExtractor.php
+
+		-
+			message: "#^Cannot access offset 'ze\\-content…' on mixed\\.$#"
+			count: 1
+			path: src/Extractor/OptionsExtractorFactory.php
+
+		-
+			message: "#^Parameter \\#2 \\$values of class ZE\\\\ContentValidation\\\\Validator\\\\ValidationResult constructor expects array, mixed given\\.$#"
+			count: 1
+			path: src/Validator/ValidationResult.php
